@@ -51,7 +51,7 @@ const App: React.FC = () => {
     cup: []
   });
 
-  const [currentView, setCurrentView] = useState<ViewState>('ABOUT');
+  const [currentView, setCurrentView] = useState<ViewState>('HOME');
   const [selectedProfile, setSelectedProfile] = useState<Profile | null>(null);
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
   const [editingProfile, setEditingProfile] = useState<Profile | null>(null);
