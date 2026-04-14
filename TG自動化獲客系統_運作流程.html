@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TG 自動化獲客系統 - 運作流程</title>
+<style>
+body { font-family: -apple-system, "PingFang SC", "Heiti SC", "Microsoft YaHei", sans-serif; font-size: 15px; line-height: 1.8; color: #1f2937; max-width: 900px; margin: 0 auto; padding: 25px; }
+h1 { color: #1a56db; font-size: 26px; text-align: center; border-bottom: 3px solid #1a56db; padding-bottom: 12px; }
+h2 { color: #1a56db; font-size: 20px; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px; margin-top: 35px; }
+h3 { color: #374151; font-size: 17px; margin-top: 20px; }
+table { border-collapse: collapse; width: 100%; margin: 12px 0; font-size: 14px; display: block; overflow-x: auto; }
+th { background: #1a56db; color: white; padding: 10px 12px; text-align: left; white-space: nowrap; }
+td { padding: 8px 12px; border: 1px solid #d1d5db; }
+tr:nth-child(even) { background: #f9fafb; }
+pre { background: #f3f4f6; padding: 14px; border-radius: 8px; font-size: 13px; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word; font-family: "SF Mono", Menlo, monospace; }
+code { background: #f3f4f6; padding: 2px 6px; border-radius: 4px; font-size: 13px; }
+hr { border: none; border-top: 2px solid #1a56db; margin: 30px 0; }
+ul, ol { padding-left: 24px; }
+li { margin-bottom: 5px; }
+@media print { body { padding: 15px; font-size: 12px; } pre { font-size: 10px; } table { font-size: 11px; } }
+</style>
+</head>
+<body>
+<h1>TG 自動化獲客系統 — 整體運作流程</h1>
+<h2>系統現況</h2>
+<pre>✅ 1 台 Mac
+✅ 1 個主帳號（已登入、已測試私訊成功）
+✅ 1 個 Bot（@teaprincess_bot，已運作）
+✅ 名單 ~18,000 人（兩份 CSV）
+✅ 所有腳本已完成，主選單可視化操作
+</pre>
+
+<hr />
+<h2>帳號分配（10 個帳號 + 1 個主帳號）</h2>
+<h3>總覽</h3>
+<table>
+<thead>
+<tr>
+<th>角色</th>
+<th>帳號</th>
+<th>任務</th>
+<th>風險等級</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>主帳號</td>
+<td>茶王公主殿下</td>
+<td>管理 Bot、手動觀察、備用</td>
+<td>不碰自動化，永遠安全</td>
+</tr>
+<tr>
+<td>探路號</td>
+<td>帳號 1-2</td>
+<td>搜尋+加入新群組、撈名單</td>
+<td>高（封了直接換新的）</td>
+</tr>
+<tr>
+<td>內容號</td>
+<td>帳號 3</td>
+<td>即時監聽轉發到頻道</td>
+<td>低（不是私訊，不算騷擾）</td>
+</tr>
+<tr>
+<td>私訊號</td>
+<td>帳號 4-10</td>
+<td>每天輪換發私訊導流</td>
+<td>中（封一支還有六支）</td>
+</tr>
+</tbody>
+</table>
+<h3>為什麼這樣分</h3>
+<ul>
+<li><strong>主帳號不跑自動化</strong> — 這是門面，絕對不能被封</li>
+<li><strong>2 支探路號</strong> — 加群+撈名單風險最高，封了換新的就好，不影響其他功能</li>
+<li><strong>1 支內容號</strong> — 轉發到自己頻道風險低，1 支就夠，24 小時跑</li>
+<li><strong>7 支私訊號</strong> — 私訊是核心產能，越多越好，封一支還有六支繼續跑</li>
+</ul>
+<h3>封號應對</h3>
+<pre>私訊號被封 1 支 → 還有 6 支繼續跑，產能掉 15%
+私訊號被封 2 支 → 買 2 張新預付卡補上
+探路號被封     → 直接換新的，不影響私訊和內容
+內容號被封     → 把一支私訊號改成內容號
+主帳號         → 永遠安全，不碰自動化
+</pre>
+
+<hr />
+<h2>Phase 1：撈名單（探路號 1-2）</h2>
+<pre>自動化流程：
+
+1. 關鍵字搜尋新群組
+   └── 用預設關鍵字搜尋 → 找到新群組
+
+2. 自動加入（帶冷卻）
+   ├── 每加一個群等 30-60 秒
+   ├── 一次最多加 8-10 個群就停
+   ├── 休息 2-3 小時再加下一批
+   ├── 每天最多加 15-20 個群
+   └── 被限速 → 自動等待
+
+3. 撈取成員
+   └── 新加入的群組自動撈成員
+
+4. 合併去重
+   └── 產出 all_members.csv
+
+排程：每週自動執行一次
+狀態：✅ 已完成基礎功能，待整合自動加群+冷卻機制
+</pre>
+
+<hr />
+<h2>Phase 2：內容營運（內容號 3）</h2>
+<pre>自動化流程：
+
+即時監聽模式（24 小時持續運行）：
+├── 監聽來源群組
+├── 有新貼文 → 自動下載圖片再重新上傳（不顯示來源）
+├── 原始連結自動替換為 @teaprincess_bot
+├── 底部自動加導流文字：
+│   ━━━━━━━━━━━━━━━
+│   🍵 想約這位佳麗？點擊下方從茶王客服，找茶莊的客服了解
+│   👉 @teaprincess_bot
+│   📌 聯繫時請說是「茶王推薦」的唷！
+└── 自動過濾福利宣傳和名單清單（不轉發）
+
+排程：設定一次後 24 小時持續運行
+狀態：✅ 已測試成功
+</pre>
+
+<hr />
+<h2>Phase 3：私訊導流（私訊號 4-10）</h2>
+<pre>自動化流程：
+
+每日自動排程：
+├── 名單預分配（每帳號拿到完全不同的人，不重複）
+├── 帳號4 發 25 人 → 斷線 → 休息 30 分鐘
+├── 帳號5 發 25 人 → 斷線 → 休息 30 分鐘
+├── 帳號6 發 30 人 → 斷線 → 休息 30 分鐘
+├── ...依序輪換
+└── 全部跑完自動停止
+
+擬人化機制：
+├── 模擬打字狀態
+├── 分段發送（2-3 段）
+├── 隨機延遲 60-180 秒
+├── 5 組話術模板隨機輪換
+└── 被限速自動停用該帳號，切下一個
+
+排程：每天早上自動啟動
+狀態：⏳ 需要填入帳號資訊
+</pre>
+
+<hr />
+<h2>Phase 4：客服承接（Bot）</h2>
+<pre>自動化流程（已全自動）：
+
+用戶點 @teaprincess_bot
+├── 歡迎語：「嗨～歡迎光臨，親愛的茶士 🍵」
+├── 按鈕：🍵 大神-茶莊客服 / 🍵 極樂-茶莊客服 / ...
+├── 用戶輸入佳麗名字 → Bot 自動比對來源 → 回覆對應客服
+└── 提醒：「聯繫時請說是茶王推薦的唷！」
+
+管理指令：/add /remove /list /reload
+排程：背景持續運行
+狀態：✅ 已運作
+</pre>
+
+<hr />
+<h2>全自動運行模式</h2>
+<pre>設定一次後，電腦開著就好：
+
+┌─ 24 小時持續運行 ──────────────────────────────┐
+│                                                │
+│  內容號（帳號3）：即時監聽 → 自動轉發到頻道      │
+│  Bot：自動回覆客服按鈕                          │
+│                                                │
+├─ 每天自動執行 ─────────────────────────────────┤
+│                                                │
+│  08:00 私訊號（帳號4-10）自動啟動               │
+│  └── 7 帳號輪換發完 → 自動停止                  │
+│                                                │
+├─ 每週自動執行 ─────────────────────────────────┤
+│                                                │
+│  週一 探路號（帳號1-2）自動撈名單               │
+│  └── 搜尋新群組 → 自動加入 → 撈取 → 更新名單    │
+│                                                │
+└────────────────────────────────────────────────┘
+</pre>
+
+<hr />
+<h2>產能預估</h2>
+<table>
+<thead>
+<tr>
+<th>功能</th>
+<th>帳號</th>
+<th>每日</th>
+<th>每月</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>私訊導流</td>
+<td>7 支 × 25 人</td>
+<td>175 人</td>
+<td>5,250 人</td>
+</tr>
+<tr>
+<td>私訊導流（養號後）</td>
+<td>7 支 × 30 人</td>
+<td>210 人</td>
+<td>6,300 人</td>
+</tr>
+<tr>
+<td>撈名單</td>
+<td>2 支</td>
+<td>持續補充</td>
+<td>—</td>
+</tr>
+<tr>
+<td>內容轉發</td>
+<td>1 支</td>
+<td>即時同步</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>待完成事項</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>事項</th>
+<th>優先級</th>
+<th>預估時間</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>取得 10 張預付卡</td>
+<td>高</td>
+<td>—</td>
+</tr>
+<tr>
+<td>2</td>
+<td>註冊 10 個 TG 帳號</td>
+<td>高</td>
+<td>30 分鐘</td>
+</tr>
+<tr>
+<td>3</td>
+<td>申請 10 組 API ID/Hash</td>
+<td>高</td>
+<td>20 分鐘</td>
+</tr>
+<tr>
+<td>4</td>
+<td>填入帳號資訊（主選單 [1]）</td>
+<td>高</td>
+<td>10 分鐘</td>
+</tr>
+<tr>
+<td>5</td>
+<td>登入所有帳號（主選單 [1]）</td>
+<td>高</td>
+<td>20 分鐘</td>
+</tr>
+<tr>
+<td>6</td>
+<td>養號 3-7 天</td>
+<td>高</td>
+<td>3-7 天</td>
+</tr>
+<tr>
+<td>7</td>
+<td>新增真實客服到 Bot（主選單 [3]）</td>
+<td>中</td>
+<td>5 分鐘</td>
+</tr>
+<tr>
+<td>8</td>
+<td>整合自動加群+冷卻機制到 1_scraper</td>
+<td>中</td>
+<td>待開發</td>
+</tr>
+<tr>
+<td>9</td>
+<td>買代理 IP（選配）</td>
+<td>低</td>
+<td>看需求</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>每日操作 SOP</h2>
+<pre># 開啟終端機
+cd ~/Downloads/tg-scraper-toolkit-main
+source venv/bin/activate
+python3 tg.py
+
+# 選 [11] 背景啟動 Bot（只需一次）
+# 選 [6]  啟動內容轉發即時監聽（只需一次）
+# 選 [9]  多帳號私訊（每天跑一次，自動跑完停止）
+</pre>
+
+<hr />
+<h2>防封號策略</h2>
+<table>
+<thead>
+<tr>
+<th>策略</th>
+<th>做法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>帳號分工</td>
+<td>主帳號不碰自動化、探路號做高風險、私訊號專門發</td>
+</tr>
+<tr>
+<td>獨立 API</td>
+<td>每帳號各自的 api_id/api_hash</td>
+</tr>
+<tr>
+<td>獨立電話</td>
+<td>每帳號不同手機號碼</td>
+</tr>
+<tr>
+<td>時間錯開</td>
+<td>一次只跑一個帳號，中間休息 30 分鐘</td>
+</tr>
+<tr>
+<td>擬人化</td>
+<td>模擬打字、分段發送、隨機延遲 60-180 秒</td>
+</tr>
+<tr>
+<td>話術輪換</td>
+<td>5 組模板隨機，每人收到不同內容</td>
+</tr>
+<tr>
+<td>每日上限</td>
+<td>新號 15-20 人，老號 30-40 人</td>
+</tr>
+<tr>
+<td>加群冷卻</td>
+<td>每次加 8-10 個群，休息 2-3 小時</td>
+</tr>
+<tr>
+<td>限速偵測</td>
+<td>FloodWait 自動等待，PeerFlood 自動停用帳號</td>
+</tr>
+<tr>
+<td>斷點續傳</td>
+<td>中斷重跑不重複，進度自動保存</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>防重複發送（三層保險）</h2>
+<pre>第 1 層：名單預分配 → 每帳號拿到完全不同的人
+第 2 層：即時記錄 → 每發一人立刻寫入 dm_sent_log.csv
+第 3 層：啟動檢查 → 重跑自動跳過已發的人
+</pre>
+
+<hr />
+<h2>硬體需求</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>數量</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Mac 電腦</td>
+<td>1 台</td>
+<td>跑所有腳本</td>
+</tr>
+<tr>
+<td>預付卡</td>
+<td>10 張</td>
+<td>註冊 TG 帳號，號碼在自己手上</td>
+</tr>
+<tr>
+<td>手機</td>
+<td>1 支</td>
+<td>輪流插卡收驗證碼，日常不需要</td>
+</tr>
+</tbody>
+</table>
+</body>
+</html>

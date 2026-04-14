@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>茶王推廣計畫｜整體報告</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, "Noto Sans TC", sans-serif; background: #f5f4f0; color: #2c2c2a; padding: 40px 24px; }
+.wrap { max-width: 800px; margin: 0 auto; }
+
+/* Header */
+.header { background: #3c3489; color: #fff; border-radius: 12px; padding: 32px 36px; margin-bottom: 28px; }
+.header h1 { font-size: 22px; font-weight: 600; margin-bottom: 6px; }
+.header p { font-size: 13px; opacity: 0.75; }
+
+/* Section */
+.section { background: #fff; border-radius: 10px; padding: 24px 28px; margin-bottom: 20px; border: 1px solid #e8e6df; }
+.section h2 { font-size: 15px; font-weight: 600; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+.tag { font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 20px; }
+.tag-purple { background: #eeedfe; color: #534ab7; }
+.tag-amber  { background: #faeeda; color: #854f0b; }
+.tag-teal   { background: #e1f5ee; color: #0f6e56; }
+.tag-coral  { background: #faece7; color: #993c1d; }
+.tag-green  { background: #eaf3de; color: #3b6d11; }
+.tag-gray   { background: #f1efe8; color: #5f5e5a; }
+
+/* Flow boxes */
+.flow { display: flex; flex-direction: column; gap: 0; }
+.flow-item { display: flex; align-items: flex-start; gap: 16px; padding: 14px 0; border-bottom: 1px solid #f1efe8; }
+.flow-item:last-child { border-bottom: none; }
+.flow-num { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; flex-shrink: 0; margin-top: 1px; }
+.flow-body h3 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+.flow-body p  { font-size: 12px; color: #5f5e5a; line-height: 1.6; }
+
+/* Phase blocks */
+.phases { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.phase { border-radius: 8px; padding: 16px 18px; }
+.phase h3 { font-size: 13px; font-weight: 600; margin-bottom: 10px; }
+.phase ul { padding-left: 16px; }
+.phase li { font-size: 12px; line-height: 1.8; color: #444441; }
+
+/* Table */
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { text-align: left; padding: 10px 12px; background: #f5f4f0; font-weight: 600; font-size: 12px; color: #5f5e5a; }
+td { padding: 10px 12px; border-bottom: 1px solid #f1efe8; }
+tr:last-child td { border-bottom: none; }
+.pill { display: inline-block; font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 20px; }
+
+/* Commission */
+.commission { background: #faeeda; border-radius: 8px; padding: 18px 20px; display: flex; align-items: center; gap: 20px; }
+.commission .formula { font-size: 18px; font-weight: 600; color: #633806; }
+.commission .desc { font-size: 12px; color: #854f0b; line-height: 1.6; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="header">
+  <h1>茶王推廣計畫｜整體報告</h1>
+  <p>透過 TG Channel 建立個人品牌，推廣合作方商品，以「茶王推薦」機制進行分潤結算</p>
+</div>
+
+<!-- 整體架構 -->
+<div class="section">
+  <h2>整體架構 <span class="tag tag-purple">策略概覽</span></h2>
+  <div class="flow">
+    <div class="flow-item">
+      <div class="flow-num" style="background:#f1efe8;color:#444441;">1</div>
+      <div class="flow-body">
+        <h3>官網</h3>
+        <p>茶王現有資產，CTA 導流到 TG Channel，未來開群後改導 TG 群</p>
+      </div>
+    </div>
+    <div class="flow-item">
+      <div class="flow-num" style="background:#eeedfe;color:#3c3489;">2</div>
+      <div class="flow-body">
+        <h3>Lihi 一頁導流頁</h3>
+        <p>集中茶王所有社群入口：官網、TG Channel、IG、Threads、LINE（陸續補上）</p>
+      </div>
+    </div>
+    <div class="flow-item">
+      <div class="flow-num" style="background:#e1f5ee;color:#085041;">3</div>
+      <div class="flow-body">
+        <h3>TG Channel（單向廣播）</h3>
+        <p>每天 1-2 則商品貼文，附合作方客服連結，每則固定加「購買請告知客服由茶王推薦」</p>
+      </div>
+    </div>
+    <div class="flow-item">
+      <div class="flow-num" style="background:#faece7;color:#712b13;">4</div>
+      <div class="flow-body">
+        <h3>合作方客服接待</h3>
+        <p>客人進入後告知「茶王推薦」，客服備註訂單來源，月底統計結算</p>
+      </div>
+    </div>
+    <div class="flow-item">
+      <div class="flow-num" style="background:#eaf3de;color:#27500a;">5</div>
+      <div class="flow-body">
+        <h3>成長飛輪</h3>
+        <p>訂閱者口碑分享 → Channel 自然成長 → 更多商品曝光 → 分潤增加</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 分潤機制 -->
+<div class="section">
+  <h2>分潤機制 <span class="tag tag-amber">對帳方式</span></h2>
+  <div class="commission">
+    <div class="formula">訂單數 × 單價 × 40%</div>
+    <div class="desc">
+      暗語：客人購買時告知客服「茶王推薦」<br>
+      客服備註訂單來源，月底由合作方提供訂單數<br>
+      每月底結算一次，無需推薦碼或系統串接
+    </div>
+  </div>
+</div>
+
+<!-- 執行時程 -->
+<div class="section">
+  <h2>執行時程 <span class="tag tag-teal">四個階段</span></h2>
+  <div class="phases">
+    <div class="phase" style="background:#f1efe8;">
+      <h3 style="color:#444441;">A｜準備期（今天完成）</h3>
+      <ul>
+        <li>建立 Lihi 頁面</li>
+        <li>TG Channel 設定完善</li>
+        <li>與合作方確認對帳機制</li>
+      </ul>
+    </div>
+    <div class="phase" style="background:#eeedfe;">
+      <h3 style="color:#3c3489;">B｜冷啟動（第一週）</h3>
+      <ul>
+        <li>私訊 100 人邀加入 Channel</li>
+        <li>準備首批貼文素材</li>
+        <li>開始發貼文並觀察反應</li>
+      </ul>
+    </div>
+    <div class="phase" style="background:#e1f5ee;">
+      <h3 style="color:#085041;">C｜日常執行（持續）</h3>
+      <ul>
+        <li>每天 1-2 則商品貼文</li>
+        <li>每週看 Lihi 點擊數據</li>
+        <li>每月底對帳請款</li>
+      </ul>
+    </div>
+    <div class="phase" style="background:#eaf3de;">
+      <h3 style="color:#27500a;">D｜擴張期（之後）</h3>
+      <ul>
+        <li>Channel 成熟後開 TG 群</li>
+        <li>補齊 IG / Threads / LINE</li>
+        <li>更新 Lihi 頁面</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- 自動化評估 -->
+<div class="section">
+  <h2>各環節自動化評估 <span class="tag tag-gray">工作量分析</span></h2>
+  <table>
+    <tr>
+      <th>環節</th>
+      <th>執行者</th>
+      <th>自動化</th>
+      <th>頻率</th>
+    </tr>
+    <tr>
+      <td>私訊 100 人冷啟動</td>
+      <td>茶王</td>
+      <td><span class="pill" style="background:#f1efe8;color:#5f5e5a;">手動</span></td>
+      <td>一次性</td>
+    </tr>
+    <tr>
+      <td>Channel 貼文撰寫</td>
+      <td>茶王</td>
+      <td><span class="pill" style="background:#faeeda;color:#854f0b;">半自動</span></td>
+      <td>每天</td>
+    </tr>
+    <tr>
+      <td>貼文排程發送</td>
+      <td>TG Scheduled</td>
+      <td><span class="pill" style="background:#eaf3de;color:#3b6d11;">自動</span></td>
+      <td>每天</td>
+    </tr>
+    <tr>
+      <td>Lihi 點擊追蹤</td>
+      <td>Lihi 後台</td>
+      <td><span class="pill" style="background:#eaf3de;color:#3b6d11;">自動</span></td>
+      <td>即時</td>
+    </tr>
+    <tr>
+      <td>客服備註訂單</td>
+      <td>合作方</td>
+      <td><span class="pill" style="background:#f1efe8;color:#5f5e5a;">手動</span></td>
+      <td>每筆訂單</td>
+    </tr>
+    <tr>
+      <td>月底對帳請款</td>
+      <td>茶王</td>
+      <td><span class="pill" style="background:#f1efe8;color:#5f5e5a;">手動</span></td>
+      <td>每月一次</td>
+    </tr>
+  </table>
+</div>
+
+</div>
+</body>
+</html>
