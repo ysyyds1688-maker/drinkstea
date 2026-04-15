@@ -433,6 +433,21 @@ export const profilesApi = {
       method: 'POST',
     });
   },
+
+  // 熱門佳麗（按收藏數排序）
+  getPopular: (limit = 50): Promise<{ profiles: Profile[]; total: number }> => {
+    return apiRequest<{ profiles: Profile[]; total: number }>(`${API_ENDPOINTS.profiles}/popular?limit=${limit}`);
+  },
+
+  // 新上架（7 天內）
+  getNew: (limit = 50): Promise<{ profiles: Profile[]; total: number }> => {
+    return apiRequest<{ profiles: Profile[]; total: number }>(`${API_ENDPOINTS.profiles}/new?limit=${limit}`);
+  },
+
+  // 統計（收藏數/瀏覽數/評論平均）
+  getStats: (id: string): Promise<{ favoritesCount: number; viewsCount: number; reviewsCount: number; averageRating: number }> => {
+    return apiRequest(`${API_ENDPOINTS.profiles}/${id}/stats`);
+  },
 };
 
 // Articles API

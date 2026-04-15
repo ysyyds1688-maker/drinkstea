@@ -62,6 +62,10 @@ const App: React.FC = () => {
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  // 快選分類：all=全部 / popular=熱門 / new=新上架
+  const [quickTab, setQuickTab] = useState<'all' | 'popular' | 'new'>('all');
+  const [popularProfiles, setPopularProfiles] = useState<Profile[]>([]);
+  const [newProfiles, setNewProfiles] = useState<Profile[]>([]);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('login');
   const [currentPage, setCurrentPage] = useState(1); // 当前页码
@@ -550,14 +554,20 @@ const App: React.FC = () => {
 
   // 篩選 + 搜索 + 隨機排序（本月精選隨機出現）
   const filteredProfiles = useMemo(() => {
+    // 快選分頁：熱門 / 新上架 → 直接用後端排好的陣列
+    let source: Profile[] = profiles;
+    if (currentView === 'HOME' && quickTab === 'popular' && popularProfiles.length > 0) {
+      source = popularProfiles;
+    } else if (currentView === 'HOME' && quickTab === 'new' && newProfiles.length > 0) {
+      source = newProfiles;
+    }
+
     // 先应用搜索
-    let result = searchProfiles(profiles, searchQuery);
-    
+    let result = searchProfiles(source, searchQuery);
+
     // 嚴選好茶页面只显示后台管理员上架的profiles（userId为空或null）
     if (currentView === 'HOME') {
       result = result.filter(p => {
-        // 只显示userId为空、null、undefined或空字符串的profiles（高级茶）
-        // 如果userId不存在、为null、undefined或空字符串，则显示
         const hasUserId = p.userId && p.userId !== '' && p.userId !== null && p.userId !== undefined;
         return !hasUserId;
       });
@@ -607,7 +617,7 @@ const App: React.FC = () => {
     });
 
     return result;
-  }, [profiles, filters, searchQuery, currentView]);
+  }, [profiles, filters, searchQuery, currentView, quickTab, popularProfiles, newProfiles]);
 
   // 分页逻辑
   const totalPages = Math.ceil(filteredProfiles.length / itemsPerPage);
@@ -938,6 +948,44 @@ const App: React.FC = () => {
                          <div className="h-1.5 w-12 bg-brand-yellow rounded-full"></div>
                          <div className="h-1.5 w-4 bg-gray-200 rounded-full"></div>
                     </div>
+                </div>
+
+                {/* 快選分類：全部 / 熱門 / 新上架 — 跟篩選分開 */}
+                <div className="flex gap-2 mb-4 overflow-x-auto no-scrollbar">
+                  {[
+                    { key: 'all',     label: '✨ 全部佳麗', desc: '看全部' },
+                    { key: 'popular', label: '🔥 熱門',     desc: '最多人收藏' },
+                    { key: 'new',     label: '🆕 新上架',   desc: '7 天內' },
+                  ].map(t => (
+                    <button
+                      key={t.key}
+                      onClick={async () => {
+                        setQuickTab(t.key as any);
+                        setCurrentPage(1);
+                        if (t.key === 'popular' && popularProfiles.length === 0) {
+                          try {
+                            const r = await profilesApi.getPopular(50);
+                            setPopularProfiles(r.profiles);
+                          } catch (e) { console.warn('load popular failed', e); }
+                        }
+                        if (t.key === 'new' && newProfiles.length === 0) {
+                          try {
+                            const r = await profilesApi.getNew(50);
+                            setNewProfiles(r.profiles);
+                          } catch (e) { console.warn('load new failed', e); }
+                        }
+                      }}
+                      className={`flex-shrink-0 px-5 py-2.5 rounded-full text-sm font-bold transition-all ${
+                        quickTab === t.key
+                          ? 'text-white shadow-lg scale-105'
+                          : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
+                      }`}
+                      style={quickTab === t.key ? { backgroundColor: '#1a5f3f' } : {}}
+                      title={t.desc}
+                    >
+                      {t.label}
+                    </button>
+                  ))}
                 </div>
 
                 {/* 搜索框 */}

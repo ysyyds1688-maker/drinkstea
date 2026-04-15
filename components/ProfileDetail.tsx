@@ -95,6 +95,7 @@ export const ProfileDetail: React.FC<ProfileDetailProps> = ({ profile, onBack })
   const [averageRating, setAverageRating] = useState(0);
   const [totalReviews, setTotalReviews] = useState(0);
   const [isLoadingReviews, setIsLoadingReviews] = useState(true);
+  const [stats, setStats] = useState<{ favoritesCount: number; viewsCount: number; reviewsCount: number; averageRating: number } | null>(null);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [showAllReviews, setShowAllReviews] = useState(false);
   const [relatedPosts, setRelatedPosts] = useState<ForumPost[]>([]);
@@ -176,6 +177,21 @@ export const ProfileDetail: React.FC<ProfileDetailProps> = ({ profile, onBack })
   // 載入評論
   useEffect(() => {
     loadReviews();
+  }, [profile.id]);
+
+  // 載入統計（收藏數/瀏覽數/評論數/平均分）
+  useEffect(() => {
+    let aborted = false;
+    (async () => {
+      try {
+        const { profilesApi } = await import('../services/apiService');
+        const s = await profilesApi.getStats(profile.id);
+        if (!aborted) setStats(s);
+      } catch (e) {
+        // 靜默：API 還沒部署或失敗都不影響主功能
+      }
+    })();
+    return () => { aborted = true; };
   }, [profile.id]);
 
   // 載入相關茶帖 + 推薦小姐
@@ -317,6 +333,27 @@ export const ProfileDetail: React.FC<ProfileDetailProps> = ({ profile, onBack })
               <div className="flex items-center gap-3 mb-3 flex-wrap">
                 <h1 className="text-4xl font-serif font-bold text-brand-black">{profile.name}</h1>
                 <span className="text-3xl">{profile.nationality}</span>
+              </div>
+
+              {/* 統計徽章列：收藏數 / 瀏覽 / 評論平均 */}
+              {stats && (
+                <div className="flex flex-wrap items-center gap-3 mb-3 text-sm">
+                  <span className="inline-flex items-center gap-1 px-3 py-1 bg-red-50 text-red-600 rounded-full font-bold">
+                    ❤️ {stats.favoritesCount} 人收藏
+                  </span>
+                  <span className="inline-flex items-center gap-1 px-3 py-1 bg-blue-50 text-blue-600 rounded-full font-bold">
+                    👀 {stats.viewsCount} 次瀏覽
+                  </span>
+                  {stats.reviewsCount > 0 && (
+                    <span className="inline-flex items-center gap-1 px-3 py-1 bg-yellow-50 text-yellow-700 rounded-full font-bold">
+                      ⭐ {stats.averageRating} ({stats.reviewsCount} 則評論)
+                    </span>
+                  )}
+                </div>
+              )}
+
+              <div className="flex items-center gap-3 mb-3 flex-wrap">
+                <span className="invisible">.</span>
                 <button
                   onClick={() => {
                     const url = `${window.location.origin}/?profile=${profile.id}`;
