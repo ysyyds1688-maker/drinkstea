@@ -914,11 +914,11 @@ const App: React.FC = () => {
                   </div>
                 </div>
 
-                {/* 篩選按鈕 */}
-                <div className="mb-4">
+                {/* 篩選按鈕 - sticky 黏在頁面頂部，滾動也看得到 */}
+                <div className="sticky top-2 z-30 mb-4 flex justify-start">
                   <button
                     onClick={() => setIsFilterOpen(true)}
-                    className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-white shadow-md transition-transform hover:scale-105"
+                    className="flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-bold text-white shadow-2xl transition-transform hover:scale-105 backdrop-blur-sm"
                     style={{ backgroundColor: '#1a5f3f' }}
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -931,11 +931,11 @@ const App: React.FC = () => {
                   </button>
                 </div>
 
-                {/* 浮動篩選按鈕（捲動時固定） */}
+                {/* 隱藏舊浮動按鈕（用 sticky 取代）*/}
                 <button
                   onClick={() => setIsFilterOpen(true)}
-                  className="fixed left-4 bottom-4 z-40 flex items-center gap-2 px-4 py-3 rounded-full text-sm font-bold text-white shadow-2xl transition-transform hover:scale-110"
-                  style={{ backgroundColor: '#1a5f3f' }}
+                  className="hidden"
+                  style={{ display: 'none' }}
                   title="進階篩選"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
