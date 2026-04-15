@@ -717,7 +717,7 @@ const App: React.FC = () => {
                   className="w-full h-full object-contain group-hover:brightness-110 transition-all duration-300"
                   style={{
                     filter: 'drop-shadow(0 2px 4px rgba(26, 95, 63, 0.3))',
-                    animation: 'flagWave 3s ease-in-out infinite',
+                    /* 移除無限動畫，省手機 GPU */
                     transformOrigin: 'center center',
                     width: '50px',
                     height: 'auto'
@@ -1352,7 +1352,7 @@ const App: React.FC = () => {
                   className="w-full h-full object-contain"
                   style={{
                     filter: 'drop-shadow(0 2px 4px rgba(26, 95, 63, 0.3))',
-                    animation: 'flagWave 3s ease-in-out infinite',
+                    /* 移除無限動畫，省手機 GPU */
                     transformOrigin: 'center center',
                     width: '48px',
                     height: 'auto'

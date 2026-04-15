@@ -200,9 +200,9 @@ export const ProfileDetail: React.FC<ProfileDetailProps> = ({ profile, onBack })
         return { p, score };
       });
 
-      // 按分數排序取前 6 個
+      // 按分數排序取前 4 個（減少圖片載入負擔）
       scored.sort((a: any, b: any) => b.score - a.score);
-      setRecommendedProfiles(scored.slice(0, 6).map((x: any) => x.p));
+      setRecommendedProfiles(scored.slice(0, 4).map((x: any) => x.p));
     } catch (error) {
       console.error('載入推薦失敗:', error);
     }
@@ -724,8 +724,12 @@ export const ProfileDetail: React.FC<ProfileDetailProps> = ({ profile, onBack })
                     <img
                       src={getImageUrl(rp.imageUrl)}
                       alt={rp.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      className="w-full h-full object-cover"
                       loading="lazy"
+                      decoding="async"
+                      fetchPriority="low"
+                      width={300}
+                      height={400}
                     />
                     <div className="absolute top-2 left-2">
                       <span className={`text-white text-[10px] font-bold px-2 py-0.5 rounded ${rp.type === 'incall' ? 'bg-blue-600' : 'bg-brand-black'}`}>
