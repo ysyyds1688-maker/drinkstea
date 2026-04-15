@@ -1201,10 +1201,14 @@ const App: React.FC = () => {
             )}
 
             {currentView === 'PROFILE_DETAIL' && selectedProfile && (
-                <ProfileDetail 
-                  profile={selectedProfile} 
-                  onBack={() => handleNavigation(profileDetailSource === 'PROVIDER_LISTING' ? 'PROVIDER_LISTING' : 'HOME')} 
+                <ProfileDetail
+                  profile={selectedProfile}
+                  onBack={() => handleNavigation(profileDetailSource === 'PROVIDER_LISTING' ? 'PROVIDER_LISTING' : 'HOME')}
                 />
+            )}
+
+            {currentView === 'USER_PROFILE' && (
+                <UserProfile />
             )}
 
             {currentView === 'ARTICLE_DETAIL' && selectedArticle && (
