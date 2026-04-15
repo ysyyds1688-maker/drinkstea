@@ -302,6 +302,26 @@ const App: React.FC = () => {
     }
   }, []);
 
+  // 監聽瀏覽器上下頁
+  useEffect(() => {
+    const handlePopState = () => {
+      const params = new URLSearchParams(window.location.search);
+      const profileId = params.get('profile');
+      if (profileId) {
+        const profile = profiles.find(p => p.id === profileId);
+        if (profile) {
+          setCurrentView('PROFILE_DETAIL');
+          setSelectedProfile(profile);
+        }
+      } else {
+        setCurrentView('HOME');
+        setSelectedProfile(null);
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [profiles]);
+
   // 處理 URL 參數，當有 ?post= 時自動跳轉到對應的茶帖
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -333,14 +353,12 @@ const App: React.FC = () => {
         setCurrentView('NOT_FOUND');
       }
     } else if (profileId) {
-      // 處理 Profile ID
+      // 處理 Profile ID（保留 URL 讓連結可分享）
       const profile = profiles.find(p => p.id === profileId);
       if (profile) {
         setCurrentView('PROFILE_DETAIL');
         setSelectedProfile(profile);
-        window.history.replaceState({}, '', window.location.pathname);
       } else if (profiles.length > 0) {
-        // 如果 Profile 列表已載入但找不到對應 Profile，顯示 404
         setCurrentView('NOT_FOUND');
       }
     }
@@ -563,17 +581,25 @@ const App: React.FC = () => {
   // 導航核心邏輯（即時切換，無遮罩）
   const handleNavigation = (view: ViewState, data?: any) => {
     setIsMobileNavOpen(false);
-    // 如果导航到详情页，记录来源页面
+    // 如果导航到详情页，记录来源页面 + 更新 URL（可分享）
     if (view === 'PROFILE_DETAIL') {
       setSelectedProfile(data);
       setProfileDetailSource(currentView);
+      if (data?.id) {
+        window.history.pushState({}, '', `?profile=${data.id}`);
+      }
     } else if (view === 'FORUM') {
       setSelectedPostId(null);
-    }
-    if (view === 'ARTICLE_DETAIL') setSelectedArticle(data);
-    if (view === 'HOME' || view === 'NEWS' || view === 'PROVIDER_LISTING') {
+    } else if (view === 'HOME' || view === 'NEWS' || view === 'PROVIDER_LISTING') {
       setSelectedProfile(null);
       setSelectedArticle(null);
+      window.history.pushState({}, '', window.location.pathname);
+    }
+    if (view === 'ARTICLE_DETAIL') {
+      setSelectedArticle(data);
+      if (data?.id) {
+        window.history.pushState({}, '', `?article=${data.id}`);
+      }
     }
     setCurrentView(view);
     window.scrollTo({ top: 0, behavior: 'instant' });

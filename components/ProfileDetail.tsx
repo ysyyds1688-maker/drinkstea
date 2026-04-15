@@ -288,9 +288,23 @@ export const ProfileDetail: React.FC<ProfileDetailProps> = ({ profile, onBack })
 
           <div className="md:col-span-7">
             <div className="mb-8 border-b border-gray-100 pb-6">
-              <div className="flex items-center gap-3 mb-2">
+              <div className="flex items-center gap-3 mb-2 flex-wrap">
                 <h1 className="text-4xl font-serif font-bold text-brand-black">{profile.name}</h1>
                 <span className="text-3xl">{profile.nationality}</span>
+                <button
+                  onClick={() => {
+                    const url = `${window.location.origin}/?profile=${profile.id}`;
+                    if (navigator.share) {
+                      navigator.share({ title: `${profile.name} - 茶王`, url }).catch(() => {});
+                    } else {
+                      navigator.clipboard.writeText(url).then(() => alert('已複製連結！\n\n' + url));
+                    }
+                  }}
+                  className="ml-auto px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-lg text-xs font-medium text-gray-700 flex items-center gap-1.5 transition"
+                  title="複製這位小姐的專屬連結"
+                >
+                  🔗 分享
+                </button>
               </div>
               <div className="flex items-center gap-3 mb-4">
                 <p className="text-gray-500 text-sm font-bold tracking-widest flex items-center gap-2">
