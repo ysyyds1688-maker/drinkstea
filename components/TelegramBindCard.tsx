@@ -52,12 +52,29 @@ export const TelegramBindCard: React.FC = () => {
       <div className="flex items-center gap-3 mb-4">
         <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full flex items-center justify-center shadow-md">
           <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M21.198 2.433a2.242 2.242 0 0 0-1.022.215l-8.609 3.33c-2.068.8-4.133 1.598-5.724 2.21a405.15 405.15 0 0 1-2.849 1.09c-.42.147-.99.332-1.473.901-.728.968.193 1.798.919 2.286 1.61.516 3.275 1.009 4.654 1.472.846 1.467 1.618 2.94 2.453 4.413.428.752 1.057 1.475 2.011 1.585.954.11 1.706-.482 2.301-1.156 1.43-1.622 2.873-3.243 4.296-4.871.62-.703 1.276-1.41 1.882-2.123.293-.345.654-.787.84-1.348.187-.561.034-1.305-.66-1.554-.31-.111-.673-.123-1.018-.073-.345.05-.682.155-1 .283-.638.255-1.221.642-1.804 1.03-.194.13-.388.26-.583.387-.71.464-1.421.926-2.136 1.382L7.78 11.95c-.55.353-1.105.7-1.658 1.046-.295.184-.59.367-.886.55l-.026.017a1.073 1.073 0 0 1-1.108-.045 1.073 1.073 0 0 1-.342-1.054c.069-.398.328-.687.612-.893.31-.226.681-.402 1.066-.563l.027-.011 7.732-3.297c1.06-.452 2.121-.904 3.181-1.357.91-.388 1.82-.776 2.731-1.165.348-.148.696-.296 1.044-.444a1.69 1.69 0 0 1 .768-.135.69.69 0 0 1 .377.17c.205.193.117.51.022.768Z"/>
+            <path d="M21.198 2.433a2.242 2.242 0 0 0-1.022.215l-8.609 3.33c-2.068.8-4.133 1.598-5.724 2.21a405.15 405.15 0 0 1-2.849 1.09c-.42.147-.99.332-1.473.901-.728.968.193 1.798.919 2.286 1.61.516 3.275 1.009 4.654 1.472.846 1.467 1.618 2.94 2.453 4.413.428.752 1.057 1.475 2.011 1.585.954.11 1.706-.482 2.301-1.156 1.43-1.622 2.873-3.243 4.296-4.871.62-.703 1.276-1.41 1.882-2.123.293-.345.654-.787.84-1.348.187-.561.034-1.305-.66-1.554Z"/>
           </svg>
         </div>
         <div>
           <h3 className="font-bold text-lg text-gray-800">綁定 Telegram</h3>
           <p className="text-xs text-gray-500">綁定後在 TG Bot 也能查看你的最愛</p>
+        </div>
+      </div>
+
+      {/* === 為什麼要綁定（一律顯示）=== */}
+      <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 mb-4">
+        <div className="flex items-start gap-2">
+          <span className="text-xl">💡</span>
+          <div className="flex-1">
+            <p className="font-bold text-gray-800 text-sm mb-2">為什麼要綁定 Telegram？</p>
+            <ul className="text-xs text-gray-700 space-y-1.5 leading-relaxed">
+              <li>✅ 你在網站❤️收藏的小姐會自動同步到 TG Bot</li>
+              <li>✅ 在 TG Bot 直接看到小姐照片 + 資料卡</li>
+              <li>✅ 截圖資料卡，直接傳給 LINE 客服預約</li>
+              <li>✅ 不用每次都來網站翻找喜歡的小姐</li>
+              <li>✅ 新妹上架第一時間 TG 通知</li>
+            </ul>
+          </div>
         </div>
       </div>
 
@@ -67,51 +84,65 @@ export const TelegramBindCard: React.FC = () => {
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            已綁定
+            已綁定 Telegram
           </div>
           <div className="text-sm text-gray-600">
             {status.telegramUsername ? `@${status.telegramUsername}` : `Telegram ID: ${status.telegramId}`}
           </div>
-          <div className="mt-3 text-xs text-gray-500">
-            你在網站收藏的小姐會自動同步到 TG Bot
+          <div className="mt-3 p-3 bg-green-50 rounded-lg text-xs text-green-700 leading-relaxed">
+            🎉 你在網站收藏的小姐已自動同步到 TG Bot<br/>
+            👉 到 <a href="https://t.me/teaprincess_bot" target="_blank" rel="noopener" className="underline font-medium">@teaprincess_bot</a> 點「❤️ 我的最愛」即可查看
           </div>
         </div>
       ) : (
         <div>
+          {/* === 操作步驟（一律顯示）=== */}
+          <div className="bg-white rounded-xl p-4 mb-3 border border-blue-100">
+            <p className="font-bold text-gray-800 text-sm mb-3">📝 綁定步驟（3 分鐘完成）</p>
+            <ol className="space-y-3 text-sm text-gray-700">
+              <li className="flex gap-2">
+                <span className="flex-shrink-0 w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold">1</span>
+                <span>點下方按鈕「<span className="font-bold text-blue-600">取得驗證碼</span>」（10 分鐘有效）</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="flex-shrink-0 w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold">2</span>
+                <span>到 Telegram 找 <a href="https://t.me/teaprincess_bot" target="_blank" rel="noopener" className="text-blue-600 underline font-bold">@teaprincess_bot</a></span>
+              </li>
+              <li className="flex gap-2">
+                <span className="flex-shrink-0 w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold">3</span>
+                <span>輸入 <code className="bg-gray-100 px-2 py-0.5 rounded text-blue-600 font-mono">/bind 驗證碼</code> 即可完成綁定</span>
+              </li>
+            </ol>
+          </div>
+
           {!code ? (
             <>
-              <p className="text-sm text-gray-600 mb-3">
-                綁定步驟：<br/>
-                1️⃣ 點擊下方按鈕取得驗證碼<br/>
-                2️⃣ 到 Telegram 找 <a href="https://t.me/teaprincess_bot" target="_blank" rel="noopener" className="text-blue-600 underline font-medium">@teaprincess_bot</a><br/>
-                3️⃣ 輸入 <code className="bg-gray-100 px-1.5 py-0.5 rounded text-blue-600">/bind 驗證碼</code>
-              </p>
               <button
                 onClick={generateCode}
                 disabled={loading}
-                className="w-full py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-xl font-bold hover:opacity-90 transition disabled:opacity-50"
+                className="w-full py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-xl font-bold hover:opacity-90 transition disabled:opacity-50 shadow-md"
               >
-                {loading ? '生成中...' : '取得驗證碼'}
+                {loading ? '生成中...' : '🔑 取得驗證碼'}
               </button>
               {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
             </>
           ) : (
-            <div className="bg-white rounded-xl p-4 border border-blue-200">
-              <p className="text-sm text-gray-600 mb-2">你的驗證碼（10 分鐘有效）：</p>
-              <div className="bg-blue-50 rounded-lg p-3 text-center mb-3">
-                <code className="text-2xl font-bold text-blue-600 tracking-widest">{code}</code>
+            <div className="bg-white rounded-xl p-4 border-2 border-blue-300">
+              <p className="text-sm text-gray-600 mb-2 font-medium">✨ 你的驗證碼（10 分鐘有效）：</p>
+              <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-lg p-4 text-center mb-3 border-2 border-dashed border-blue-300">
+                <code className="text-3xl font-bold text-blue-600 tracking-widest">{code}</code>
               </div>
-              <p className="text-sm text-gray-600 mb-3">
-                到 Telegram 找 <a href="https://t.me/teaprincess_bot" target="_blank" rel="noopener" className="text-blue-600 underline font-medium">@teaprincess_bot</a>，輸入：
+              <p className="text-sm text-gray-700 mb-2">
+                👉 開啟 <a href="https://t.me/teaprincess_bot" target="_blank" rel="noopener" className="text-blue-600 underline font-bold">@teaprincess_bot</a>，輸入：
               </p>
-              <div className="bg-gray-100 rounded-lg p-3 text-center">
-                <code className="text-blue-600 font-mono">/bind {code}</code>
+              <div className="bg-gray-100 rounded-lg p-3 text-center mb-3">
+                <code className="text-blue-600 font-mono text-base">/bind {code}</code>
               </div>
               <button
                 onClick={() => { setCode(''); fetchStatus(); }}
-                className="w-full mt-3 py-2 text-sm text-gray-500 hover:text-gray-700"
+                className="w-full py-2 text-sm text-blue-600 hover:text-blue-800 font-medium"
               >
-                我已綁定，重新檢查狀態
+                🔄 我已綁定，重新檢查狀態
               </button>
             </div>
           )}
