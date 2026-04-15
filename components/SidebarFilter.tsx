@@ -64,16 +64,9 @@ export const SidebarFilter: React.FC<SidebarFilterProps> = ({ filters, setFilter
   };
 
   return (
-    <aside className="w-full flex-shrink-0">
-      <div className="bg-white rounded-[2rem] shadow-xl shadow-gray-200/50 border border-gray-100 p-8">
-        <div className="flex justify-between items-center mb-8 border-b border-gray-50 pb-5">
-          <div>
-            <h2 className="text-2xl font-serif font-black text-brand-black">進階篩選</h2>
-            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">Advanced Search</p>
-          </div>
-        </div>
-
-        <div className="space-y-10 max-h-[75vh] overflow-y-auto pr-4 no-scrollbar">
+    <aside className="w-full">
+      <div className="bg-white rounded-2xl border border-gray-100 p-4">
+        <div className="space-y-6">
           
           {/* 地區 — 多選（逗號分隔） */}
           <section>
@@ -203,26 +196,6 @@ export const SidebarFilter: React.FC<SidebarFilterProps> = ({ filters, setFilter
                   }}
                 >
                   {b}
-                </button>
-              ))}
-            </div>
-          </section>
-
-          {/* 標籤特質 */}
-          <section>
-            <h3 className="text-xs font-black text-gray-400 uppercase tracking-[0.2em] mb-4">風格特質</h3>
-            <div className="flex flex-wrap gap-2">
-              {personalities.map(p => (
-                <button
-                  key={p}
-                  onClick={() => toggleArrayFilter('personalities', p)}
-                  className={`px-3 py-2 rounded-xl text-xs font-bold transition-all border ${
-                    (p === '全部' && filters.personalities.length === 0) || filters.personalities.includes(p)
-                    ? 'bg-brand-black border-brand-black text-white' 
-                    : 'bg-white border-gray-100 text-gray-500'
-                  }`}
-                >
-                  {p}
                 </button>
               ))}
             </div>

@@ -561,15 +561,14 @@ const App: React.FC = () => {
                pNat.includes(filterText) || pNat.includes(filterFlag);
       });
       const matchCup = filters.cup.length === 0 || filters.cup.includes(p.cup);
-      // 价格过滤：移除价格上限限制，所有价格都能显示
-      const matchPrice = true; // 移除价格上限限制，所有价格都能显示
-      // 年龄过滤：放宽限制，允许所有年龄（0-200）
-      const matchAge = p.age >= 0 && p.age <= 200; // 放宽年龄限制
-      // 身材條件和風格特質：如果用戶沒有選擇，則通過；如果選擇了，檢查tags中是否包含
+      // 價格過濾：用 priceRange (預算上限)
+      const matchPrice = !filters.priceRange || filters.priceRange[1] >= 200000 || (priceValue > 0 && priceValue <= filters.priceRange[1]) || priceValue <= 0;
+      // 年齡過濾：實際比對範圍
+      const matchAge = !filters.ageRange || (p.age >= filters.ageRange[0] && p.age <= filters.ageRange[1]);
+      // 身材條件
       const matchBody = filters.bodyTypes.length === 0 || filters.bodyTypes.some(tag => tags.includes(tag));
-      const matchPersonality = filters.personalities.length === 0 || filters.personalities.some(tag => tags.includes(tag));
-      
-      const shouldShow = matchType && matchLoc && matchNat && matchCup && matchPrice && matchAge && matchBody && matchPersonality;
+
+      const shouldShow = matchType && matchLoc && matchNat && matchCup && matchPrice && matchAge && matchBody;
       
       return shouldShow;
     });
