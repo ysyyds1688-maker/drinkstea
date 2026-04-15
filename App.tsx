@@ -399,12 +399,20 @@ const App: React.FC = () => {
       }
     } else if (profileId) {
       // 處理 Profile ID（保留 URL 讓連結可分享）
+      // 優化：先查本地有沒有 → 沒有就直接打 API，不等全部列表載完
       const profile = profiles.find(p => p.id === profileId);
       if (profile) {
         setCurrentView('PROFILE_DETAIL');
         setSelectedProfile(profile);
-      } else if (profiles.length > 0) {
-        setCurrentView('NOT_FOUND');
+      } else {
+        // 本地沒有 → 直接 fetch 該位（極快）
+        setCurrentView('PROFILE_DETAIL');
+        profilesApi.getById(profileId)
+          .then(p => {
+            if (p) setSelectedProfile(p);
+            else setCurrentView('NOT_FOUND');
+          })
+          .catch(() => setCurrentView('NOT_FOUND'));
       }
     }
   }, [articles, profiles]);
