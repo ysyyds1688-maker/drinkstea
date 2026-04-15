@@ -248,6 +248,10 @@ export const ProfileDetail: React.FC<ProfileDetailProps> = ({ profile, onBack })
           <div className="md:col-span-5 space-y-4">
             <div className="w-full aspect-[3/4] rounded-2xl bg-gray-100 relative group overflow-hidden shadow-xl border border-gray-100">
                <img src={getImageUrl(profile.imageUrl)} alt={profile.name} className="w-full h-full object-cover" loading="lazy" decoding="async" />
+               {/* ❤️ 我的最愛按鈕 */}
+               <div className="absolute top-4 right-4 z-30">
+                 <FavoriteButton profileId={profile.id} />
+               </div>
                {/* 驗證勳章 - 只有特選魚市（有 userId）才顯示 */}
                {profile.userId && (
                  <div className="absolute top-4 left-4">
