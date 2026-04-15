@@ -89,13 +89,19 @@ const App: React.FC = () => {
 
     setError(null);
     
-    // 先從 localStorage 讀取緩存數據，立即顯示（提升用戶體驗和 LCP）
+    // 先從 localStorage 讀取緩存（**只信 5 分鐘內的**，避免新妹上架看不到）
+    const CACHE_TTL_MS = 5 * 60 * 1000;
+    const cacheAge = (key: string) => {
+      const t = parseInt(localStorage.getItem(`${key}_time`) || '0', 10);
+      return Date.now() - t;
+    };
+
     let hasValidCache = false;
     try {
       const cachedProfiles = localStorage.getItem('sf_profiles_v1');
       const cachedArticles = localStorage.getItem('sf_articles_v1');
-      
-      if (cachedProfiles) {
+
+      if (cachedProfiles && cacheAge('sf_profiles_v1') < CACHE_TTL_MS) {
         try {
           const profiles = JSON.parse(cachedProfiles);
           if (profiles && profiles.length > 0) {
@@ -110,7 +116,7 @@ const App: React.FC = () => {
         }
       }
       
-      if (cachedArticles) {
+      if (cachedArticles && cacheAge('sf_articles_v1') < CACHE_TTL_MS) {
         try {
           const articles = JSON.parse(cachedArticles);
           if (articles && articles.length > 0) {
@@ -193,6 +199,7 @@ const App: React.FC = () => {
                 userId: p.userId,
               }));
               localStorage.setItem('sf_profiles_v1', JSON.stringify(profilesForCache));
+              localStorage.setItem('sf_profiles_v1_time', Date.now().toString());
               localStorage.setItem('sf_profiles_total', total.toString());
               if (import.meta.env.DEV) {
                 console.log(`[API] 已載入所有 ${allProfiles.length} 個 profiles（分頁載入）`);
@@ -267,6 +274,7 @@ const App: React.FC = () => {
         // 更新緩存
         try {
           localStorage.setItem('sf_articles_v1', JSON.stringify(articles));
+          localStorage.setItem('sf_articles_v1_time', Date.now().toString());
           if (import.meta.env.DEV) {
             console.log(`[API] 已更新 ${articles.length} 個 articles（總共 ${result.total} 個）`);
           }
@@ -532,6 +540,25 @@ const App: React.FC = () => {
     });
     loadData();
   };
+
+  // 自動更新：TG Web App / 瀏覽器分頁回到前景時，悄悄重抓最新資料
+  // 避免用戶看到舊快取（特別是新妹上架後）
+  useEffect(() => {
+    const onVisible = () => {
+      if (document.visibilityState !== 'visible') return;
+      // 上次載入超過 60 秒才重抓，避免快速切換造成濫請求
+      const lastLoad = parseInt(localStorage.getItem('sf_profiles_v1_time') || '0', 10);
+      if (Date.now() - lastLoad > 60_000) {
+        loadData();
+      }
+    };
+    document.addEventListener('visibilitychange', onVisible);
+    window.addEventListener('focus', onVisible);
+    return () => {
+      document.removeEventListener('visibilitychange', onVisible);
+      window.removeEventListener('focus', onVisible);
+    };
+  }, []);
 
   // 搜索功能
   const searchProfiles = (profiles: Profile[], query: string): Profile[] => {
