@@ -695,10 +695,32 @@ const App: React.FC = () => {
             <span className="block w-6 h-[2px] bg-gray-800 rounded-full" />
           </button>
 
-          {/* 手機版通知鈴鐺（右上角） */}
-          {isAuthenticated && (
-            <div className="md:hidden absolute right-4 top-1/2 -translate-y-1/2 z-10">
+          {/* 手機版右上角：個人檔案 + 通知鈴鐺 */}
+          {isAuthenticated ? (
+            <div className="md:hidden absolute right-4 top-1/2 -translate-y-1/2 z-10 flex items-center gap-2">
+              <button
+                onClick={() => handleNavigation('USER_PROFILE')}
+                className="w-10 h-10 rounded-full flex items-center justify-center text-white text-base font-bold shadow-md"
+                style={{ backgroundColor: '#1a5f3f' }}
+                aria-label="個人檔案"
+                title="個人檔案"
+              >
+                👤
+              </button>
               <NotificationBox />
+            </div>
+          ) : (
+            <div className="md:hidden absolute right-4 top-1/2 -translate-y-1/2 z-10">
+              <button
+                onClick={() => {
+                  setShowAuthModal(true);
+                  setAuthModalMode('login');
+                }}
+                className="px-3 py-1.5 rounded-lg text-xs font-bold text-white shadow-md"
+                style={{ backgroundColor: '#1a5f3f' }}
+              >
+                登入
+              </button>
             </div>
           )}
 

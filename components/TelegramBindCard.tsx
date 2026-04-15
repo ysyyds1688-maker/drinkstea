@@ -9,6 +9,20 @@ export const TelegramBindCard: React.FC = () => {
 
   const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
 
+  // 在 TG Web App 內點 t.me 連結會卡住 —— 改用官方 API openTelegramLink
+  const openBot = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    const tg = (window as any).Telegram?.WebApp;
+    if (tg && tg.initData) {
+      e.preventDefault();
+      try {
+        tg.openTelegramLink('https://t.me/teaprincess_bot');
+      } catch {
+        window.open('https://t.me/teaprincess_bot', '_blank');
+      }
+    }
+    // 非 webapp 環境 → 讓預設 href 正常執行
+  };
+
   const fetchStatus = async () => {
     if (!token) return;
     try {
@@ -91,7 +105,7 @@ export const TelegramBindCard: React.FC = () => {
           </div>
           <div className="mt-3 p-3 bg-green-50 rounded-lg text-xs text-green-700 leading-relaxed">
             🎉 你在網站收藏的小姐已自動同步到 TG Bot<br/>
-            👉 到 <a href="https://t.me/teaprincess_bot" target="_blank" rel="noopener" className="underline font-medium">@teaprincess_bot</a> 點「❤️ 我的最愛」即可查看
+            👉 到 <a href="https://t.me/teaprincess_bot" target="_blank" rel="noopener" onClick={openBot} className="underline font-medium">@teaprincess_bot</a> 點「❤️ 我的最愛」即可查看
           </div>
         </div>
       ) : (
@@ -106,7 +120,7 @@ export const TelegramBindCard: React.FC = () => {
               </li>
               <li className="flex gap-2">
                 <span className="flex-shrink-0 w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold">2</span>
-                <span>到 Telegram 找 <a href="https://t.me/teaprincess_bot" target="_blank" rel="noopener" className="text-blue-600 underline font-bold">@teaprincess_bot</a></span>
+                <span>到 Telegram 找 <a href="https://t.me/teaprincess_bot" target="_blank" rel="noopener" onClick={openBot} className="text-blue-600 underline font-bold">@teaprincess_bot</a></span>
               </li>
               <li className="flex gap-2">
                 <span className="flex-shrink-0 w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold">3</span>
@@ -145,6 +159,7 @@ export const TelegramBindCard: React.FC = () => {
                 href={`https://t.me/teaprincess_bot`}
                 target="_blank"
                 rel="noopener"
+                onClick={openBot}
                 className="block w-full py-3 mb-3 bg-white border-2 border-blue-500 text-blue-600 text-center rounded-xl font-bold hover:bg-blue-50 transition"
               >
                 💬 開啟 @teaprincess_bot
