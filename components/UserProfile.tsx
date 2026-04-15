@@ -1116,27 +1116,14 @@ export const UserProfile: React.FC<UserProfileProps> = ({ onProfileClick }) => {
                         </div>
                       </div>
                     )}
-                    {/* 會員等級（茶客位階/佳麗位階）- 獨立顯示，與積分與任務標籤頁的當前等級一致 */}
+                    {/* 茶客位階 已隱藏 */}
+                    {false && (
                     <div className="bg-gray-50 rounded-xl p-4 border border-gray-100 sm:col-span-2">
                       <p className="text-xs text-gray-500 mb-2 sm:mb-3 uppercase tracking-wide">
                         {user?.role === 'provider' ? '佳麗位階' : '茶客位階'}
                       </p>
-                      <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
-                        {(() => {
-                          // 優先使用 userStats.currentLevel（從後端計算的），如果沒有則使用 user.membershipLevel
-                          const displayLevel = userStats?.currentLevel || user?.membershipLevel;
-                          if (displayLevel) {
-                            return <MembershipBadge level={displayLevel as any} size="md" />;
-                          }
-                          // 如果都沒有，顯示默認等級
-                          return <span className="text-gray-500">{user?.role === 'provider' ? '初級佳麗' : '茶客'}</span>;
-                        })()}
-                        {user?.verificationBadges && user.verificationBadges.length > 0 && (
-                          <VerificationBadges badges={user.verificationBadges} size="md" />
-                        )}
-                      </div>
-                      <p className="text-xs text-gray-400 mt-2">通過完成任務獲得經驗值升級</p>
                     </div>
+                    )}
                   </div>
                   <div className="pt-4 border-t border-gray-100">
                     <button
@@ -1148,7 +1135,8 @@ export const UserProfile: React.FC<UserProfileProps> = ({ onProfileClick }) => {
                     </button>
                   </div>
 
-                  {/* 會員等級權益 - 品茶客和後宮佳麗都顯示 */}
+                  {/* 會員等級權益 + 購買VIP 已隱藏 */}
+                  {false && (
                   <div className="mt-8 bg-white rounded-lg shadow-lg border border-gray-200 p-4 sm:p-6">
                       <div className="flex items-center justify-between mb-4">
                         <h2 className="text-xl sm:text-2xl font-bold">{user?.role === 'provider' ? '後宮佳麗會員等級權益' : '品茶客會員等級權益'}</h2>
@@ -1589,6 +1577,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({ onProfileClick }) => {
                         </div>
                       </div>
                     </div>
+                  )}
                 </>
               ) : (
                 <div className="space-y-6 md:space-y-8">
