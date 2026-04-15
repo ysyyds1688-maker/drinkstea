@@ -1417,7 +1417,7 @@ const App: React.FC = () => {
 
       {/* 皇朝御璽風浮動按鈕 */}
       <a
-        href="https://lin.ee/wPxjsSG"
+        href="https://lin.ee/yxB700g"
         target="_blank"
         rel="noopener noreferrer"
         className="fixed right-3 bottom-4 sm:right-4 sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2 z-50 group"

@@ -10,7 +10,7 @@ export const CDN_URL = import.meta.env.VITE_CDN_URL || '';
 
 // 官方 Line 連結（用於嚴選好茶的立即約會品茶諮詢按鈕）
 // 可以通過環境變量 VITE_OFFICIAL_LINE_URL 配置官方 Line 連結
-export const OFFICIAL_LINE_URL = import.meta.env.VITE_OFFICIAL_LINE_URL || 'https://lin.ee/Hj61zlP';
+export const OFFICIAL_LINE_URL = import.meta.env.VITE_OFFICIAL_LINE_URL || 'https://lin.ee/yxB700g';
 
 // 獲取 CDN 優化的圖片 URL
 export const getImageUrl = (url: string): string => {

@@ -38,7 +38,7 @@ export const PriceInfo: React.FC<PriceInfoProps> = ({ profile }) => {
         <div className="text-center py-6">
           <p className="text-gray-500 mb-4">詳細價格請聯繫客服詢問</p>
           <a
-            href="https://lin.ee/wPxjsSG"
+            href="https://lin.ee/yxB700g"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-block px-8 py-3 text-white rounded-xl font-bold hover:opacity-90 transition-all shadow-lg"
