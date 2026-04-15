@@ -1396,6 +1396,12 @@ const App: React.FC = () => {
                   onBack={() => handleNavigation(profileDetailSource === 'PROVIDER_LISTING' ? 'PROVIDER_LISTING' : 'HOME')}
                 />
             )}
+            {currentView === 'PROFILE_DETAIL' && !selectedProfile && (
+                <div className="flex flex-col items-center justify-center py-32">
+                    <div className="w-12 h-12 border-4 border-brand-green border-t-transparent rounded-full animate-spin mb-4" style={{ borderColor: '#1a5f3f', borderTopColor: 'transparent' }} />
+                    <p className="text-gray-500 text-sm">載入佳麗資料中...</p>
+                </div>
+            )}
 
             {currentView === 'USER_PROFILE' && (
                 <UserProfile />
