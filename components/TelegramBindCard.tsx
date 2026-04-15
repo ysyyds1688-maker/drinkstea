@@ -132,11 +132,25 @@ export const TelegramBindCard: React.FC = () => {
               <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-lg p-4 text-center mb-3 border-2 border-dashed border-blue-300">
                 <code className="text-3xl font-bold text-blue-600 tracking-widest">{code}</code>
               </div>
-              <p className="text-sm text-gray-700 mb-2">
-                👉 開啟 <a href="https://t.me/teaprincess_bot" target="_blank" rel="noopener" className="text-blue-600 underline font-bold">@teaprincess_bot</a>，輸入：
-              </p>
-              <div className="bg-gray-100 rounded-lg p-3 text-center mb-3">
-                <code className="text-blue-600 font-mono text-base">/bind {code}</code>
+              <p className="text-sm text-gray-700 mb-2 font-medium">👉 點下方按鈕複製完整指令，到 TG Bot 貼上送出：</p>
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(`/bind ${code}`).then(() => alert('✅ 已複製！\n\n到 @teaprincess_bot 貼上即可'));
+                }}
+                className="w-full py-3 mb-2 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-xl font-bold hover:opacity-90 transition shadow-md flex items-center justify-center gap-2"
+              >
+                📋 複製 /bind {code}
+              </button>
+              <a
+                href={`https://t.me/teaprincess_bot`}
+                target="_blank"
+                rel="noopener"
+                className="block w-full py-3 mb-3 bg-white border-2 border-blue-500 text-blue-600 text-center rounded-xl font-bold hover:bg-blue-50 transition"
+              >
+                💬 開啟 @teaprincess_bot
+              </a>
+              <div className="bg-gray-50 rounded-lg p-3 text-center mb-2">
+                <code className="text-blue-600 font-mono text-sm select-all">/bind {code}</code>
               </div>
               <button
                 onClick={() => { setCode(''); fetchStatus(); }}
