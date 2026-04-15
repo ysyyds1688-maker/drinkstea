@@ -705,8 +705,8 @@ export const ProfileDetail: React.FC<ProfileDetailProps> = ({ profile, onBack })
         {/* 推薦其他小姐 */}
         {recommendedProfiles.length > 0 && (
           <div className="mt-16 border-t border-gray-100 pt-10">
-            <h3 className="text-2xl md:text-3xl font-serif font-black text-brand-black mb-2">你可能也喜歡</h3>
-            <p className="text-sm text-gray-500 mb-6">根據地區、國籍、類型推薦</p>
+            <h3 className="text-2xl md:text-3xl font-serif font-black text-brand-black mb-2">推薦佳麗</h3>
+            <p className="text-sm text-gray-500 mb-6">根據地區、國籍、類型為你推薦</p>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
               {recommendedProfiles.map(rp => (
                 <a
