@@ -538,9 +538,13 @@ const App: React.FC = () => {
       const priceValue = typeof actualPrice === 'number' ? actualPrice : Number(actualPrice || 0);
 
       const matchType = filters.type === 'all' || p.type === filters.type;
-      // 地區：去掉「市」「縣」做模糊比對（DB 存「台中」、選單顯示「台中市」也能對上）
+      // 地區：去掉「市」「縣」做模糊比對 + 支援多選（逗號分隔，OR 邏輯）
       const normLoc = (s: string) => (s || '').replace(/[市縣]/g, '');
-      const matchLoc = filters.location === '全部' || normLoc(p.location).includes(normLoc(filters.location)) || normLoc(filters.location).includes(normLoc(p.location));
+      const matchLoc = !filters.location || filters.location === '全部' || filters.location.split(',').some(loc => {
+        const n = normLoc(loc);
+        const pn = normLoc(p.location);
+        return pn.includes(n) || n.includes(pn);
+      });
       // 國籍：篩選 value 可能是 emoji 也可能是文字，DB 可能存 emoji 也可能存中文，雙向都比對
       const FLAG_TO_TEXT: Record<string, string> = {
         '🇹🇼': '台灣', '🇯🇵': '日本', '🇰🇷': '韓國', '🇭🇰': '香港',
@@ -927,6 +931,19 @@ const App: React.FC = () => {
                     )}
                   </button>
                 </div>
+
+                {/* 浮動篩選按鈕（捲動時固定） */}
+                <button
+                  onClick={() => setIsFilterOpen(true)}
+                  className="fixed left-4 bottom-4 z-40 flex items-center gap-2 px-4 py-3 rounded-full text-sm font-bold text-white shadow-2xl transition-transform hover:scale-110"
+                  style={{ backgroundColor: '#1a5f3f' }}
+                  title="進階篩選"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" strokeWidth={2} />
+                  </svg>
+                  <span className="hidden sm:inline">篩選</span>
+                </button>
 
                 {/* 篩選抽屜 */}
                 {isFilterOpen && (

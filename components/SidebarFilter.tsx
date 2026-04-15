@@ -75,20 +75,31 @@ export const SidebarFilter: React.FC<SidebarFilterProps> = ({ filters, setFilter
 
         <div className="space-y-10 max-h-[75vh] overflow-y-auto pr-4 no-scrollbar">
           
-          {/* 地區 */}
+          {/* 地區 — 多選（逗號分隔） */}
           <section>
-            <h3 className="text-xs font-black text-gray-400 uppercase tracking-[0.2em] mb-4">地區位置</h3>
+            <h3 className="text-xs font-black text-gray-400 uppercase tracking-[0.2em] mb-4">地區位置（可複選）</h3>
             <div className="flex flex-wrap gap-2">
-              {locations.map(loc => (
+              {locations.map(loc => {
+                const selected = loc === '全部'
+                  ? (filters.location === '全部' || !filters.location)
+                  : (filters.location || '').split(',').includes(loc);
+                return (
                 <button
                   key={loc}
-                  onClick={() => updateFilters('location', loc)}
+                  onClick={() => {
+                    if (loc === '全部') { updateFilters('location', '全部'); return; }
+                    const current = (filters.location && filters.location !== '全部') ? filters.location.split(',') : [];
+                    const idx = current.indexOf(loc);
+                    if (idx > -1) current.splice(idx, 1);
+                    else current.push(loc);
+                    updateFilters('location', current.length ? current.join(',') : '全部');
+                  }}
                   className={`px-3 py-2 rounded-xl text-xs font-bold transition-all border ${
-                    filters.location === loc 
-                    ? 'text-white shadow-md' 
+                    selected
+                    ? 'text-white shadow-md'
                     : 'bg-white border-gray-100 text-gray-500'
                   }`}
-                  style={filters.location === loc ? {
+                  style={selected ? {
                     backgroundColor: '#1a5f3f',
                     borderColor: '#1a5f3f'
                   } : {
@@ -97,7 +108,8 @@ export const SidebarFilter: React.FC<SidebarFilterProps> = ({ filters, setFilter
                 >
                   {loc}
                 </button>
-              ))}
+              );
+              })}
             </div>
           </section>
 
