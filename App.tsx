@@ -376,14 +376,13 @@ const App: React.FC = () => {
       setCurrentView('FORUM');
       setSelectedPostId(postId);
     } else if (articleId) {
-      // 處理文章 ID
+      // 處理文章 ID —— 保留 URL 讓連結可分享（跟 profile 一樣）
       const article = articles.find(a => a.id === articleId);
       if (article) {
         setCurrentView('ARTICLE_DETAIL');
         setSelectedArticle(article);
-        window.history.replaceState({}, '', window.location.pathname);
+        // 不清 URL，讓 ?article=xxx 保留
       } else if (articles.length > 0) {
-        // 如果文章列表已載入但找不到對應文章，顯示 404
         setCurrentView('NOT_FOUND');
       }
     } else if (profileId) {
@@ -1320,11 +1319,12 @@ const App: React.FC = () => {
             )}
 
             {currentView === 'ARTICLE_DETAIL' && selectedArticle && (
-                <ArticleDetail 
-                  article={selectedArticle} 
+                <ArticleDetail
+                  article={selectedArticle}
                   onBack={() => handleNavigation('NEWS')}
                   allArticles={articles}
                   onArticleClick={(article) => handleNavigation('ARTICLE_DETAIL', article)}
+                  onBrowseProfiles={() => handleNavigation('HOME')}
                 />
             )}
 

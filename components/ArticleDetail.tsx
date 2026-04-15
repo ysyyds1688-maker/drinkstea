@@ -8,9 +8,10 @@ interface ArticleDetailProps {
   allArticles?: Article[];
   onNavigateToForum?: (category?: string) => void;
   onArticleClick?: (article: Article) => void;
+  onBrowseProfiles?: () => void;  // 去看佳麗
 }
 
-export const ArticleDetail: React.FC<ArticleDetailProps> = ({ article, onBack, allArticles = [], onArticleClick }) => {
+export const ArticleDetail: React.FC<ArticleDetailProps> = ({ article, onBack, allArticles = [], onArticleClick, onBrowseProfiles }) => {
   // 複製到剪貼板
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text).then(() => {
@@ -209,8 +210,11 @@ export const ArticleDetail: React.FC<ArticleDetailProps> = ({ article, onBack, a
               </svg>
               分享文章
             </button>
-            <button className="premium-button text-white px-8 py-3 rounded shadow-lg transition-colors font-bold tracking-wide">
-              立即預約喝茶
+            <button
+              onClick={() => onBrowseProfiles?.()}
+              className="premium-button text-white px-8 py-3 rounded shadow-lg transition-colors font-bold tracking-wide"
+            >
+              🀫 去看佳麗
             </button>
           </div>
         </div>
