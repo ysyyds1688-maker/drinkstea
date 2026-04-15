@@ -1839,15 +1839,18 @@ export const UserProfile: React.FC<UserProfileProps> = ({ onProfileClick }) => {
             <div className="space-y-6">
               {userStats ? (
                 <>
-                  <PointsDisplay
-                    currentPoints={userStats.stats.currentPoints}
-                    experiencePoints={userStats.stats.experiencePoints}
-                    currentLevel={userStats.currentLevel}
-                    nextLevel={userStats.nextLevel}
-                    experienceNeeded={userStats.experienceNeeded}
-                    progress={userStats.progress}
-                  />
-                  
+                  {/* 經驗值/等級系統暫時隱藏（老闆要求） */}
+                  {false && (
+                    <PointsDisplay
+                      currentPoints={userStats.stats.currentPoints}
+                      experiencePoints={userStats.stats.experiencePoints}
+                      currentLevel={userStats.currentLevel}
+                      nextLevel={userStats.nextLevel}
+                      experienceNeeded={userStats.experienceNeeded}
+                      progress={userStats.progress}
+                    />
+                  )}
+
                   {/* 任務標籤頁 */}
                   <div className="bg-white rounded-lg shadow">
                     {/* 子標籤切換 */}

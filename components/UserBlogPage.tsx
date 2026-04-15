@@ -317,16 +317,8 @@ export const UserBlogPage: React.FC<UserBlogPageProps> = ({ userId, onBack }) =>
                 </div>
               )}
 
-              {/* 統計信息卡片 */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-6">
-                <div className="bg-white rounded-xl p-4 text-center shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-                  <div className="text-2xl md:text-3xl font-bold text-brand-green mb-1">{userData.currentPoints || 0}</div>
-                  <div className="text-xs text-gray-500 font-medium">積分</div>
-                </div>
-                <div className="bg-white rounded-xl p-4 text-center shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-                  <div className="text-2xl md:text-3xl font-bold text-blue-600 mb-1">{userData.experiencePoints || 0}</div>
-                  <div className="text-xs text-gray-500 font-medium">經驗值</div>
-                </div>
+              {/* 統計信息卡片（積分/經驗值暫時隱藏） */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-6">
                 <div className="bg-white rounded-xl p-4 text-center shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
                   <div className="text-2xl md:text-3xl font-bold text-purple-600 mb-1">{userData.postsCount || 0}</div>
                   <div className="text-xs text-gray-500 font-medium">發文數</div>

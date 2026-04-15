@@ -356,10 +356,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({ userId, isOp
                   <p className="text-2xl font-bold text-purple-600">{userData.likesReceived}</p>
                   <p className="text-xs text-gray-600 mt-1">獲讚數</p>
                 </div>
-                <div className="bg-gray-50 rounded-lg p-4 text-center">
-                  <p className="text-2xl font-bold text-amber-600">{userData.experiencePoints}</p>
-                  <p className="text-xs text-gray-600 mt-1">經驗值</p>
-                </div>
+                {/* 經驗值暫時隱藏（老闆要求） */}
               </div>
 
               {/* 英雄事蹟 */}
