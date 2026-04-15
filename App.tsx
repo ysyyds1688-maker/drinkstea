@@ -719,6 +719,13 @@ const App: React.FC = () => {
             {isAuthenticated ? (
               <>
                 <button
+                  onClick={() => handleNavigation('USER_PROFILE')}
+                  className="px-4 py-2 rounded-lg text-sm font-bold text-white shadow-md transition-all hover:scale-105"
+                  style={{ backgroundColor: '#1a5f3f' }}
+                >
+                  👤 {user?.userName || '個人檔案'}
+                </button>
+                <button
                   onClick={logout}
                   className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
                 >
@@ -767,14 +774,23 @@ const App: React.FC = () => {
               >
                 關於茶王
               </button>
-              <div className="border-t border-gray-200 mt-3 pt-3">
+              <div className="border-t border-gray-200 mt-3 pt-3 space-y-2">
                 {isAuthenticated ? (
-                  <button
-                    onClick={() => { logout(); setIsMobileNavOpen(false); }}
-                    className="w-full text-center px-4 py-2 rounded-lg border border-red-200 text-red-600 text-sm font-medium hover:bg-red-50"
-                  >
-                    登出
-                  </button>
+                  <>
+                    <button
+                      onClick={() => { handleNavigation('USER_PROFILE'); setIsMobileNavOpen(false); }}
+                      className="w-full text-center px-4 py-2 rounded-lg text-white text-sm font-bold"
+                      style={{ backgroundColor: '#1a5f3f' }}
+                    >
+                      👤 {user?.userName || '個人檔案'}
+                    </button>
+                    <button
+                      onClick={() => { logout(); setIsMobileNavOpen(false); }}
+                      className="w-full text-center px-4 py-2 rounded-lg border border-red-200 text-red-600 text-sm font-medium hover:bg-red-50"
+                    >
+                      登出
+                    </button>
+                  </>
                 ) : (
                   <button
                     onClick={() => { setShowAuthModal(true); setAuthModalMode('login'); setIsMobileNavOpen(false); }}
