@@ -53,6 +53,11 @@ export default defineConfig(({ mode }) => {
         },
         workbox: {
           globPatterns: ['**/*.{js,css,html,ico,png,svg,jpg,jpeg,webp,woff,woff2}'],
+          skipWaiting: true,
+          clientsClaim: true,
+          cleanupOutdatedCaches: true,
+          navigateFallback: '/index.html',
+          navigateFallbackDenylist: [/^\/api/],
           runtimeCaching: [
             {
               urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,

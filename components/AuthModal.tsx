@@ -26,6 +26,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, initialMode = 'lo
   const [verificationCode, setVerificationCode] = useState('');
   const [forgotPasswordStep, setForgotPasswordStep] = useState<'request' | 'verify' | 'result'>('request');
   const [passwordResult, setPasswordResult] = useState<{ password?: string; passwordHint?: string; needReset?: boolean; note?: string } | null>(null);
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmNewPassword, setConfirmNewPassword] = useState('');
+  const [tgInfo, setTgInfo] = useState<string>('');
   
   const { login, register } = useAuth();
 
@@ -355,7 +358,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, initialMode = 'lo
                     placeholder="請輸入註冊時的 Email"
                     className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-green"
                   />
-                  <p className="text-xs text-gray-500 mt-1">我們將發送驗證碼到您的郵箱</p>
+                  <p className="text-xs text-blue-600 mt-2 leading-relaxed">
+                    💡 我們會把驗證碼發送到您**綁定的 Telegram 帳號**<br/>
+                    （前提：曾在「茶客檔案」綁定 TG）
+                  </p>
                 </div>
                 <button
                   onClick={async () => {
@@ -371,7 +377,15 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, initialMode = 'lo
                     setIsSubmitting(true);
                     setError(null);
                     try {
-                      await authApi.forgotPassword(forgotPasswordEmail.trim());
+                      const { API_BASE_URL } = await import('../config/api');
+                      const resp = await fetch(`${API_BASE_URL}/api/tg/forgot-password/request`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email: forgotPasswordEmail.trim() }),
+                      });
+                      const data = await resp.json();
+                      if (!resp.ok) throw new Error(data.error || '發送失敗');
+                      setTgInfo(data.masked_tg || '已發送到綁定的 Telegram');
                       setForgotPasswordStep('verify');
                     } catch (err: any) {
                       setError(err.message || '發送驗證碼失敗');
@@ -382,45 +396,77 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, initialMode = 'lo
                   disabled={isSubmitting}
                   className="w-full py-2 bg-brand-green text-white rounded-lg hover:bg-opacity-90 disabled:opacity-50"
                 >
-                  {isSubmitting ? '發送中...' : '發送驗證碼'}
+                  {isSubmitting ? '發送中...' : '📲 發送驗證碼到 Telegram'}
                 </button>
               </>
             )}
 
             {forgotPasswordStep === 'verify' && (
               <>
+                <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-800">
+                  ✅ 已發送驗證碼到 {tgInfo || '您綁定的 Telegram'}
+                </div>
                 <div>
-                  <label className="block text-sm font-medium mb-2">驗證碼</label>
+                  <label className="block text-sm font-medium mb-2">驗證碼（6 位數字）</label>
                   <input
                     type="text"
                     value={verificationCode}
-                    onChange={(e) => setVerificationCode(e.target.value)}
-                    placeholder="請輸入6位驗證碼"
+                    onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, ''))}
+                    placeholder="請輸入收到的驗證碼"
                     maxLength={6}
-                    className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-green text-center text-2xl tracking-widest"
+                    inputMode="numeric"
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-green text-center text-2xl tracking-widest"
                   />
-                  <p className="text-xs text-gray-500 mt-1">驗證碼已發送到 {forgotPasswordEmail}</p>
-                  <button
-                    onClick={() => {
-                      setForgotPasswordStep('request');
-                      setVerificationCode('');
-                    }}
-                    className="text-xs text-gray-500 hover:text-gray-700 mt-2 underline"
-                  >
-                    重新發送驗證碼
-                  </button>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">新密碼（至少 6 字）</label>
+                  <input
+                    type="password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    placeholder="輸入新密碼"
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-green"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">確認新密碼</label>
+                  <input
+                    type="password"
+                    value={confirmNewPassword}
+                    onChange={(e) => setConfirmNewPassword(e.target.value)}
+                    placeholder="再次輸入新密碼"
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-green"
+                  />
                 </div>
                 <button
                   onClick={async () => {
                     if (!verificationCode.trim() || verificationCode.length !== 6) {
-                      setError('請輸入6位驗證碼');
+                      setError('請輸入 6 位驗證碼');
+                      return;
+                    }
+                    if (newPassword.length < 6) {
+                      setError('密碼至少 6 字');
+                      return;
+                    }
+                    if (newPassword !== confirmNewPassword) {
+                      setError('兩次密碼不一致');
                       return;
                     }
                     setIsSubmitting(true);
                     setError(null);
                     try {
-                      const result = await authApi.verifyForgotPassword(forgotPasswordEmail.trim(), verificationCode.trim());
-                      setPasswordResult(result);
+                      const { API_BASE_URL } = await import('../config/api');
+                      const resp = await fetch(`${API_BASE_URL}/api/tg/forgot-password/verify`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                          email: forgotPasswordEmail.trim(),
+                          code: verificationCode.trim(),
+                          newPassword: newPassword,
+                        }),
+                      });
+                      const data = await resp.json();
+                      if (!resp.ok) throw new Error(data.error || '驗證失敗');
                       setForgotPasswordStep('result');
                     } catch (err: any) {
                       setError(err.message || '驗證失敗');
@@ -429,41 +475,36 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, initialMode = 'lo
                     }
                   }}
                   disabled={isSubmitting}
-                  className="w-full py-2 bg-brand-green text-white rounded-lg hover:bg-opacity-90 disabled:opacity-50"
+                  className="w-full py-3 bg-brand-green text-white rounded-lg hover:bg-opacity-90 disabled:opacity-50 font-bold"
                 >
-                  {isSubmitting ? '驗證中...' : '驗證'}
+                  {isSubmitting ? '處理中...' : '✅ 確認重設密碼'}
+                </button>
+                <button
+                  onClick={() => {
+                    setForgotPasswordStep('request');
+                    setVerificationCode('');
+                    setNewPassword('');
+                    setConfirmNewPassword('');
+                  }}
+                  className="text-xs text-gray-500 hover:text-gray-700 underline w-full text-center"
+                >
+                  重新發送驗證碼
                 </button>
               </>
             )}
 
-            {forgotPasswordStep === 'result' && passwordResult && (
+            {forgotPasswordStep === 'result' && (
               <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-                <h4 className="font-bold text-green-900 mb-2">✅ 驗證成功</h4>
-                {passwordResult.password ? (
-                  <div className="space-y-2">
-                    <p className="text-sm text-green-800">您的原始密碼：</p>
-                    <div className="p-3 bg-white border-2 border-green-300 rounded-lg">
-                      <p className="text-lg font-mono font-bold text-center text-green-900">{passwordResult.password}</p>
-                    </div>
-                    {passwordResult.note && (
-                      <p className="text-xs text-green-700 mt-2">{passwordResult.note}</p>
-                    )}
-                  </div>
-                ) : (
-                  <div className="space-y-2">
-                    <p className="text-sm text-green-800">{passwordResult.passwordHint || '無法顯示原始密碼'}</p>
-                    {passwordResult.needReset && (
-                      <p className="text-xs text-gray-600 mt-2">如需重置密碼，請聯繫客服。</p>
-                    )}
-                  </div>
-                )}
+                <h4 className="font-bold text-green-900 mb-2">✅ 密碼重設成功！</h4>
+                <p className="text-sm text-green-800">請用新密碼登入。</p>
                 <button
                   onClick={() => {
                     setMode('login');
                     setForgotPasswordStep('request');
                     setForgotPasswordEmail('');
                     setVerificationCode('');
-                    setPasswordResult(null);
+                    setNewPassword('');
+                    setConfirmNewPassword('');
                     setError(null);
                   }}
                   className="w-full mt-4 py-2 bg-brand-green text-white rounded-lg hover:bg-opacity-90"
