@@ -13,6 +13,7 @@ import { VerifiedBadge } from './VerifiedBadge';
 import { UserBadges } from './UserBadges';
 import { PointsDisplay } from './PointsDisplay';
 import { DailyTasksPanel } from './DailyTasksPanel';
+import { TelegramBindCard } from './TelegramBindCard';
 import { PointsGuideModal } from './PointsGuideModal';
 import { BadgesPanel } from './BadgesPanel';
 import { AchievementsPanel } from './AchievementsPanel';
@@ -878,147 +879,11 @@ export const UserProfile: React.FC<UserProfileProps> = ({ onProfileClick }) => {
             >
               <button
                 onClick={() => setActiveTab('profile')}
-                className={`flex-shrink-0 pb-2 px-3 md:px-4 text-sm md:text-base font-medium transition-colors whitespace-nowrap ${
-                  activeTab === 'profile'
-                    ? 'border-b-2 border-brand-green text-brand-green'
-                    : 'text-gray-500 hover:text-gray-700'
-                }`}
-                style={activeTab === 'profile' ? { borderColor: '#1a5f3f', color: '#1a5f3f' } : {}}
+                className="flex-shrink-0 pb-2 px-3 md:px-4 text-sm md:text-base font-medium border-b-2 border-brand-green text-brand-green whitespace-nowrap"
+                style={{ borderColor: '#1a5f3f', color: '#1a5f3f' }}
               >
                 {user?.role === 'provider' ? '佳麗檔案' : '茶客檔案'}
               </button>
-            {user?.role === 'client' && (
-              <button
-                onClick={() => {
-                  setActiveTab('favorites');
-                  loadFavorites();
-                }}
-                className={`flex-shrink-0 pb-2 px-3 md:px-4 text-sm md:text-base font-medium transition-colors whitespace-nowrap ${
-                  activeTab === 'favorites'
-                    ? 'border-b-2 border-brand-green text-brand-green'
-                    : 'text-gray-500 hover:text-gray-700'
-                }`}
-                style={activeTab === 'favorites' ? { borderColor: '#1a5f3f', color: '#1a5f3f' } : {}}
-              >
-                私藏好茶
-              </button>
-            )}
-            {user?.role === 'provider' && (
-              <button
-                onClick={() => setActiveTab('listing')}
-                className={`flex-shrink-0 pb-2 px-3 md:px-4 text-sm md:text-base font-medium transition-colors whitespace-nowrap ${
-                  activeTab === 'listing'
-                    ? 'border-b-2 border-brand-green text-brand-green'
-                    : 'text-gray-500 hover:text-gray-700'
-                }`}
-                style={activeTab === 'listing' ? { borderColor: '#1a5f3f', color: '#1a5f3f' } : {}}
-              >
-                上架管理
-              </button>
-            )}
-            {/* 訊息收件箱（佳麗和茶客都可見）- 移動到上架管理右邊 */}
-            <button
-              onClick={() => setActiveTab('messages')}
-              className={`flex-shrink-0 pb-2 px-3 md:px-4 text-sm md:text-base font-medium transition-colors whitespace-nowrap relative ${
-                activeTab === 'messages'
-                  ? 'border-b-2 border-brand-green text-brand-green'
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
-              style={activeTab === 'messages' ? { borderColor: '#1a5f3f', color: '#1a5f3f' } : {}}
-            >
-              {user?.role === 'provider' ? '訊息收件箱' : '我的訊息'}
-            </button>
-            {/* 通知中心 - 移動到訊息收件箱右邊 */}
-            <button
-              onClick={() => setActiveTab('notifications')}
-              className={`flex-shrink-0 pb-2 px-3 md:px-4 text-sm md:text-base font-medium transition-colors whitespace-nowrap relative ${
-                activeTab === 'notifications'
-                  ? 'border-b-2 border-brand-green text-brand-green'
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
-              style={activeTab === 'notifications' ? { borderColor: '#1a5f3f', color: '#1a5f3f' } : {}}
-            >
-              通知中心
-            </button>
-            {/* 品茶紀錄 - 移動到通知中心右邊 */}
-            <button
-              onClick={() => setActiveTab('bookings')}
-              className={`flex-shrink-0 pb-2 px-3 md:px-4 text-sm md:text-base font-medium transition-colors whitespace-nowrap ${
-                activeTab === 'bookings'
-                  ? 'border-b-2 border-brand-green text-brand-green'
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
-              style={activeTab === 'bookings' ? { borderColor: '#1a5f3f', color: '#1a5f3f' } : {}}
-            >
-              品茶紀錄
-            </button>
-            {/* 其他標籤頁往後移 */}
-            <button
-              onClick={() => setActiveTab('subscription')}
-              className={`flex-shrink-0 pb-2 px-3 md:px-4 text-sm md:text-base font-medium transition-colors whitespace-nowrap ${
-                activeTab === 'subscription'
-                  ? 'border-b-2 border-brand-green text-brand-green'
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
-              style={activeTab === 'subscription' ? { borderColor: '#1a5f3f', color: '#1a5f3f' } : {}}
-            >
-              御選資格
-            </button>
-            <button
-              onClick={() => setActiveTab('points')}
-              className={`flex-shrink-0 pb-2 px-3 md:px-4 text-sm md:text-base font-medium transition-colors whitespace-nowrap ${
-                activeTab === 'points'
-                  ? 'border-b-2 border-brand-green text-brand-green'
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
-              style={activeTab === 'points' ? { borderColor: '#1a5f3f', color: '#1a5f3f' } : {}}
-            >
-              茶譽任務
-            </button>
-            <button
-              onClick={() => setActiveTab('achievements')}
-              className={`flex-shrink-0 pb-2 px-3 md:px-4 text-sm md:text-base font-medium transition-colors whitespace-nowrap ${
-                activeTab === 'achievements'
-                  ? 'border-b-2 border-brand-green text-brand-green'
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
-              style={activeTab === 'achievements' ? { borderColor: '#1a5f3f', color: '#1a5f3f' } : {}}
-            >
-              {user?.role === 'provider' ? '佳麗成就' : '茶譽成就'}
-            </button>
-            <button
-              onClick={() => setActiveTab('badges')}
-              className={`flex-shrink-0 pb-2 px-3 md:px-4 text-sm md:text-base font-medium transition-colors whitespace-nowrap ${
-                activeTab === 'badges'
-                  ? 'border-b-2 border-brand-green text-brand-green'
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
-              style={activeTab === 'badges' ? { borderColor: '#1a5f3f', color: '#1a5f3f' } : {}}
-            >
-              御印徽章
-            </button>
-            <button
-              onClick={() => setActiveTab('wall')}
-              className={`flex-shrink-0 pb-2 px-3 md:px-4 text-sm md:text-base font-medium transition-colors whitespace-nowrap ${
-                activeTab === 'wall'
-                  ? 'border-b-2 border-brand-green text-brand-green'
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
-              style={activeTab === 'wall' ? { borderColor: '#1a5f3f', color: '#1a5f3f' } : {}}
-            >
-              成就勳章牆
-            </button>
-            {/* 獲取經驗值和積分方法按鈕 */}
-            <button
-              onClick={() => setShowPointsGuide(true)}
-              className="flex-shrink-0 pb-2 px-3 md:px-4 text-sm md:text-base font-medium text-blue-600 hover:text-blue-800 transition-colors whitespace-nowrap flex items-center gap-1 md:gap-2"
-              title="查看獲取經驗值和積分的方法"
-            >
-              <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <span className="hidden md:inline">獲取方法</span>
-            </button>
             </div>
           </div>
 
@@ -1986,6 +1851,9 @@ export const UserProfile: React.FC<UserProfileProps> = ({ onProfileClick }) => {
                   </div>
                 </div>
               )}
+
+              {/* === Telegram 綁定卡片 === */}
+              <TelegramBindCard />
             </div>
           )}
 

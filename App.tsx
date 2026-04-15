@@ -520,8 +520,18 @@ const App: React.FC = () => {
       const priceValue = typeof actualPrice === 'number' ? actualPrice : Number(actualPrice || 0);
 
       const matchType = filters.type === 'all' || p.type === filters.type;
-      const matchLoc = filters.location === '全部' || p.location === filters.location;
-      const matchNat = filters.nationalities.length === 0 || filters.nationalities.includes(p.nationality);
+      // 地區：去掉「市」「縣」做模糊比對（DB 存「台中」、選單顯示「台中市」也能對上）
+      const normLoc = (s: string) => (s || '').replace(/[市縣]/g, '');
+      const matchLoc = filters.location === '全部' || normLoc(p.location).includes(normLoc(filters.location)) || normLoc(filters.location).includes(normLoc(p.location));
+      // 國籍：DB 存 emoji 國旗 + 選單顯示中文，做雙向比對
+      const NAT_MAP: Record<string, string> = {
+        '台灣': '🇹🇼', '日本': '🇯🇵', '韓國': '🇰🇷', '香港': '🇭🇰',
+        '中國': '🇨🇳', '泰國': '🇹🇭', '越南': '🇻🇳', '馬來西亞': '🇲🇾', '新加坡': '🇸🇬',
+      };
+      const matchNat = filters.nationalities.length === 0 || filters.nationalities.some(n => {
+        const flag = NAT_MAP[n] || n;
+        return p.nationality === n || p.nationality === flag || (p.nationality && p.nationality.includes(flag));
+      });
       const matchCup = filters.cup.length === 0 || filters.cup.includes(p.cup);
       // 价格过滤：移除价格上限限制，所有价格都能显示
       const matchPrice = true; // 移除价格上限限制，所有价格都能显示
