@@ -69,6 +69,22 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     return !userData.lastLoginAt && welcomeShown !== 'true';
   };
 
+  // 手動登入/註冊後，若在 TG Mini App 裡就自動綁定 TG
+  const trySilentBindTelegram = async (token: string): Promise<void> => {
+    const tg = (window as any).Telegram?.WebApp;
+    if (!tg || !tg.initData) return;
+    try {
+      const { API_BASE_URL } = await import('../config/api');
+      await fetch(`${API_BASE_URL}/api/tg/silent-bind`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ initData: tg.initData }),
+      });
+    } catch {
+      // 綁定失敗不影響登入流程
+    }
+  };
+
   // TG Web App 自動登入
   const tryTelegramWebAppLogin = async (): Promise<boolean> => {
     const tg = (window as any).Telegram?.WebApp;
@@ -190,9 +206,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       lastLoginAt: response.user.lastLoginAt,
     };
     safeSetItem('auth_user', JSON.stringify(userForStorage));
-    
+
     setUser(response.user);
-    
+
+    // 在 TG Mini App 內登入 → 自動綁定 TG（下次打開可自動登入）
+    trySilentBindTelegram(response.token).catch(() => {});
+
     // 檢測是否為首次登入並顯示歡迎訊息
     if (checkFirstLogin(response.user, false)) {
       // 標記已顯示歡迎訊息
@@ -240,9 +259,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       lastLoginAt: response.user.lastLoginAt,
     };
     safeSetItem('auth_user', JSON.stringify(userForStorage));
-    
+
     setUser(response.user);
-    
+
+    // 在 TG Mini App 內註冊 → 自動綁定 TG
+    trySilentBindTelegram(response.token).catch(() => {});
+
     // 註冊後立即顯示歡迎訊息（註冊後立即登入視為首次登入）
     localStorage.setItem(`welcome_shown_${response.user.id}`, 'true');
     setTimeout(() => {
