@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { MOCK_BANNERS } from './constants';
 import { Profile, Article, FilterCriteria } from './types';
 import { ProfileDetail } from './components/ProfileDetail';
@@ -945,11 +946,12 @@ const App: React.FC = () => {
                 </button>
 
                 {/* 篩選抽屜 */}
-                {isFilterOpen && (
-                  <div className="fixed inset-0 z-50">
+                {isFilterOpen && createPortal(
+                  <div className="fixed inset-0 z-[100]">
                     <div className="absolute inset-0 bg-black/50 transition-opacity" onClick={() => setIsFilterOpen(false)} />
-                    <div className="absolute right-0 top-0 bottom-0 w-[85vw] max-w-80 bg-white shadow-2xl overflow-y-auto animate-slide-in-right">
-                      <div className="sticky top-0 bg-white border-b px-4 py-3 flex items-center justify-between z-10">
+                    <div className="absolute right-0 top-0 bottom-0 w-[85vw] max-w-80 bg-white shadow-2xl flex flex-col animate-slide-in-right">
+                      {/* Header — 固定 */}
+                      <div className="flex-shrink-0 bg-white border-b px-4 py-3 flex items-center justify-between">
                         <h3 className="font-bold text-lg">進階篩選</h3>
                         <button onClick={() => setIsFilterOpen(false)} className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors">
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -957,7 +959,8 @@ const App: React.FC = () => {
                           </svg>
                         </button>
                       </div>
-                      <div className="p-4">
+                      {/* Content — 唯一可滾動區 */}
+                      <div className="flex-1 overflow-y-auto p-4">
                         <SidebarFilter
                           filters={filters}
                           setFilters={setFilters}
@@ -965,7 +968,8 @@ const App: React.FC = () => {
                           onResetFilters={() => setFilters({ type: 'all', location: '全部', nationalities: [], bodyTypes: [], personalities: [], ageRange: [18, 80], priceRange: [0, 200000], cup: [] })}
                         />
                       </div>
-                      <div className="sticky bottom-0 bg-white border-t p-4">
+                      {/* Bottom 按鈕 — 固定 */}
+                      <div className="flex-shrink-0 bg-white border-t p-4">
                         <button
                           onClick={() => setIsFilterOpen(false)}
                           className="w-full py-3 rounded-xl text-white font-bold text-sm transition-transform hover:scale-105"
@@ -975,7 +979,8 @@ const App: React.FC = () => {
                         </button>
                       </div>
                     </div>
-                  </div>
+                  </div>,
+                  document.body
                 )}
 
                 {/* 載入狀態 - Skeleton */}
