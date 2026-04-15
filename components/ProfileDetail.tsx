@@ -288,7 +288,7 @@ export const ProfileDetail: React.FC<ProfileDetailProps> = ({ profile, onBack })
 
           <div className="md:col-span-7">
             <div className="mb-8 border-b border-gray-100 pb-6">
-              <div className="flex items-center gap-3 mb-2 flex-wrap">
+              <div className="flex items-center gap-3 mb-3 flex-wrap">
                 <h1 className="text-4xl font-serif font-bold text-brand-black">{profile.name}</h1>
                 <span className="text-3xl">{profile.nationality}</span>
                 <button
@@ -305,6 +305,14 @@ export const ProfileDetail: React.FC<ProfileDetailProps> = ({ profile, onBack })
                 >
                   🔗 分享
                 </button>
+              </div>
+              {/* 大型「加入我的最愛」按鈕 — 整合 FavoriteButton 樣式 */}
+              <div className="mb-4 flex items-center gap-3 p-3 bg-gradient-to-r from-pink-50 to-red-50 rounded-2xl border-2 border-pink-200">
+                <FavoriteButton profileId={profile.id} />
+                <div className="flex-1">
+                  <p className="text-sm font-bold text-gray-800">點 ❤️ 加入我的最愛</p>
+                  <p className="text-xs text-gray-500">綁定 TG 後在 Bot 也能查看收藏</p>
+                </div>
               </div>
               <div className="flex items-center gap-3 mb-4">
                 <p className="text-gray-500 text-sm font-bold tracking-widest flex items-center gap-2">
