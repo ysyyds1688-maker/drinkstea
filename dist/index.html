@@ -83,22 +83,13 @@
     <style>
       body {
         font-family: 'Noto Sans TC', sans-serif;
-        background-color: #ffffff; /* Pure white background for cleanliness */
+        background-color: #fafafa;
         color: #334155;
         min-height: 100vh;
-        /* 禁用移動端雙擊縮放，允許水平和垂直滾動 */
         touch-action: pan-x pan-y;
-        /* Japanese texture background - water wave + texture pattern */
-        background-image: 
-          /* 水波紋 */
-          radial-gradient(ellipse 800px 200px at 50% 50%, rgba(26, 95, 63, 0.03) 0%, transparent 50%),
-          radial-gradient(ellipse 600px 150px at 20% 80%, rgba(26, 95, 63, 0.02) 0%, transparent 50%),
-          radial-gradient(ellipse 700px 180px at 80% 20%, rgba(26, 95, 63, 0.02) 0%, transparent 50%),
-          /* 點狀紋理 */
-          radial-gradient(circle at 1px 1px, rgba(26, 95, 63, 0.05) 1px, transparent 0);
-        background-size: 100% 100%, 100% 100%, 100% 100%, 20px 20px;
-        background-position: 0 0, 0 0, 0 0, 0 0;
-        /* 移除背景動畫 — 手機 GPU 一直運轉導致過熱 */
+        /* 簡化背景 — 只保留輕點狀紋理（單層 gradient，省 GPU） */
+        background-image: radial-gradient(circle at 1px 1px, rgba(26, 95, 63, 0.04) 1px, transparent 0);
+        background-size: 24px 24px;
       }
       /* Hide scrollbar for horizontal scroll areas */
       .no-scrollbar::-webkit-scrollbar {
@@ -132,41 +123,15 @@
         50% { background-position: 0 -20px, 0 20px, 0 -15px, 0 0; }
       }
       
+      /* 簡化陰影 — 從 6 層降到 1 層，省 GPU */
       .premium-shadow {
-        box-shadow: 
-          0 8px 16px -4px rgba(26, 95, 63, 0.15),
-          0 4px 8px -2px rgba(26, 95, 63, 0.1),
-          0 0 0 1px rgba(26, 95, 63, 0.08),
-          inset 0 1px 0 0 rgba(255, 255, 255, 0.15);
+        box-shadow: 0 4px 12px rgba(26, 95, 63, 0.12);
       }
-      
-      /* 精緻卡片陰影 - 多層次 */
       .premium-card-shadow {
-        box-shadow: 
-          /* 外層大陰影 */
-          0 20px 40px -12px rgba(26, 95, 63, 0.2),
-          /* 中層陰影 */
-          0 8px 16px -4px rgba(26, 95, 63, 0.15),
-          /* 內層細陰影 */
-          0 2px 4px -1px rgba(26, 95, 63, 0.1),
-          /* 邊框光澤 */
-          0 0 0 1px rgba(26, 95, 63, 0.1),
-          inset 0 1px 2px 0 rgba(255, 255, 255, 0.2),
-          /* 底部高光 */
-          inset 0 -1px 0 0 rgba(26, 95, 63, 0.05);
-        transition: all 0.3s ease;
+        box-shadow: 0 8px 16px rgba(26, 95, 63, 0.15);
       }
-      
       .premium-card-shadow:hover {
-        box-shadow: 
-          0 24px 48px -12px rgba(26, 95, 63, 0.25),
-          0 12px 24px -6px rgba(26, 95, 63, 0.2),
-          0 4px 8px -2px rgba(26, 95, 63, 0.15),
-          0 0 0 1px rgba(26, 95, 63, 0.15),
-          inset 0 2px 4px 0 rgba(255, 255, 255, 0.3),
-          inset 0 -1px 0 0 rgba(26, 95, 63, 0.08),
-          /* 添加光暈 */
-          0 0 20px rgba(26, 95, 63, 0.1);
+        box-shadow: 0 12px 24px rgba(26, 95, 63, 0.2);
       }
       
       /* 卡片日式邊框 - 恢復基本樣式 */
@@ -367,7 +332,7 @@
   }
 }
 </script>
-  <script type="module" crossorigin src="/assets/index-BdZ0ivm3.js"></script>
+  <script type="module" crossorigin src="/assets/index-DnVomO24.js"></script>
 <link rel="manifest" href="/manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="/registerSW.js"></script></head>
   <body>
     <div id="root"></div>

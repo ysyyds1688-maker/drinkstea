@@ -679,7 +679,7 @@ const App: React.FC = () => {
       <PageTransition isVisible={isTransitioning} />
 
       {/* 導覽列 */}
-      <header className="bg-white/95 backdrop-blur-md sticky top-0 z-50 border-b h-20 flex items-center shadow-sm relative" style={{
+      <header className="bg-white sticky top-0 z-50 border-b h-20 flex items-center shadow-sm relative" style={{
         borderBottom: '2px solid rgba(26, 95, 63, 0.1)',
         boxShadow: '0 2px 4px -1px rgba(26, 95, 63, 0.1)'
       }}>
@@ -952,7 +952,7 @@ const App: React.FC = () => {
                 <div className="sticky top-2 z-30 mb-4 flex justify-start">
                   <button
                     onClick={() => setIsFilterOpen(true)}
-                    className="flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-bold text-white shadow-2xl transition-transform hover:scale-105 backdrop-blur-sm"
+                    className="flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-bold text-white shadow-2xl transition-transform hover:scale-105"
                     style={{ backgroundColor: '#1a5f3f' }}
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
