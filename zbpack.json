@@ -1,7 +1,7 @@
 {
   "node": {
     "version": "20",
-    "build_command": "VITE_API_BASE_URL=https://backenddrinktea.zeabur.app npm run build",
+    "build_command": "echo 'pre-built, skipping'",
     "output_dir": "dist"
   }
 }
