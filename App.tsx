@@ -294,6 +294,39 @@ const App: React.FC = () => {
     }
   };
 
+  // 手機右滑返回上一頁
+  useEffect(() => {
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchStartTime = 0;
+
+    const onTouchStart = (e: TouchEvent) => {
+      const t = e.touches[0];
+      touchStartX = t.clientX;
+      touchStartY = t.clientY;
+      touchStartTime = Date.now();
+    };
+    const onTouchEnd = (e: TouchEvent) => {
+      const t = e.changedTouches[0];
+      const dx = t.clientX - touchStartX;
+      const dy = t.clientY - touchStartY;
+      const dt = Date.now() - touchStartTime;
+      // 從螢幕左半邊開始 + 右滑超過 100px + 垂直位移小於 60px + 0.5 秒內
+      if (touchStartX < window.innerWidth * 0.3 && dx > 100 && Math.abs(dy) < 60 && dt < 500) {
+        // 不要在 drawer 開啟時觸發
+        if (!document.querySelector('.fixed.inset-0.z-\\[100\\]')) {
+          window.history.back();
+        }
+      }
+    };
+    document.addEventListener('touchstart', onTouchStart, { passive: true });
+    document.addEventListener('touchend', onTouchEnd, { passive: true });
+    return () => {
+      document.removeEventListener('touchstart', onTouchStart);
+      document.removeEventListener('touchend', onTouchEnd);
+    };
+  }, []);
+
   // 初始載入（使用 useRef 防止重複載入）
   const hasLoadedRef = useRef(false);
   useEffect(() => {

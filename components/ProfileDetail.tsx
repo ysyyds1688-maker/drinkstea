@@ -99,6 +99,7 @@ export const ProfileDetail: React.FC<ProfileDetailProps> = ({ profile, onBack })
   const [showAllReviews, setShowAllReviews] = useState(false);
   const [relatedPosts, setRelatedPosts] = useState<ForumPost[]>([]);
   const [isLoadingPosts, setIsLoadingPosts] = useState(false);
+  const [recommendedProfiles, setRecommendedProfiles] = useState<Profile[]>([]);
   const [showBookingModal, setShowBookingModal] = useState(false);
   const [showMessageModal, setShowMessageModal] = useState(false);
   const { userStatus, isAuthenticated, user } = useAuth();
@@ -177,10 +178,35 @@ export const ProfileDetail: React.FC<ProfileDetailProps> = ({ profile, onBack })
     loadReviews();
   }, [profile.id]);
 
-  // 載入相關茶帖
+  // 載入相關茶帖 + 推薦小姐
   useEffect(() => {
     loadRelatedPosts();
+    loadRecommended();
   }, [profile.id]);
+
+  // 推薦邏輯：同地區 / 同國籍 / 同 type 優先，否則隨機
+  const loadRecommended = async () => {
+    try {
+      const data = await profilesApi.getAll({ limit: 100 });
+      const others = (data.profiles || []).filter((p: Profile) => p.id !== profile.id);
+
+      // 加分機制
+      const scored = others.map((p: Profile) => {
+        let score = Math.random() * 0.5; // 基礎隨機 0-0.5
+        if (p.location === profile.location) score += 3;
+        if (p.nationality === profile.nationality) score += 2;
+        if (p.type === profile.type) score += 1;
+        if (p.cup === profile.cup) score += 0.5;
+        return { p, score };
+      });
+
+      // 按分數排序取前 6 個
+      scored.sort((a: any, b: any) => b.score - a.score);
+      setRecommendedProfiles(scored.slice(0, 6).map((x: any) => x.p));
+    } catch (error) {
+      console.error('載入推薦失敗:', error);
+    }
+  };
 
   const loadRelatedPosts = async () => {
     setIsLoadingPosts(true);
@@ -675,6 +701,49 @@ export const ProfileDetail: React.FC<ProfileDetailProps> = ({ profile, onBack })
                 </div>
              )}
         </div>
+
+        {/* 推薦其他小姐 */}
+        {recommendedProfiles.length > 0 && (
+          <div className="mt-16 border-t border-gray-100 pt-10">
+            <h3 className="text-2xl md:text-3xl font-serif font-black text-brand-black mb-2">你可能也喜歡</h3>
+            <p className="text-sm text-gray-500 mb-6">根據地區、國籍、類型推薦</p>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+              {recommendedProfiles.map(rp => (
+                <a
+                  key={rp.id}
+                  href={`?profile=${rp.id}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    window.history.pushState({}, '', `?profile=${rp.id}`);
+                    // 觸發 navigate 事件讓 App 切換 profile
+                    window.dispatchEvent(new CustomEvent('navigate-to-profile', { detail: { profileId: rp.id } }));
+                  }}
+                  className="group block rounded-xl overflow-hidden bg-gray-100 shadow-md hover:shadow-xl transition-all hover:scale-[1.02]"
+                >
+                  <div className="relative aspect-[3/4] overflow-hidden">
+                    <img
+                      src={getImageUrl(rp.imageUrl)}
+                      alt={rp.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      loading="lazy"
+                    />
+                    <div className="absolute top-2 left-2">
+                      <span className={`text-white text-[10px] font-bold px-2 py-0.5 rounded ${rp.type === 'incall' ? 'bg-blue-600' : 'bg-brand-black'}`}>
+                        {rp.type === 'incall' ? '🏠 定點' : '🚗 外送'}
+                      </span>
+                    </div>
+                    <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/80 to-transparent">
+                      <div className="text-white">
+                        <div className="font-bold text-sm">{rp.name} {rp.nationality}</div>
+                        <div className="text-xs opacity-80">{rp.age}歲 · {rp.cup}罩杯 · {rp.location}</div>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* 相關討論茶帖 */}
         {relatedPosts.length > 0 && (
