@@ -83,29 +83,43 @@ export default defineConfig(({ mode }) => {
               }
             },
             {
-              urlPattern: /^https:\/\/.*\.zeabur\.app\/.*/i,
+              // API 回應 — profiles/articles 之類列表用 StaleWhileRevalidate（先回快取再背景更新）
+              urlPattern: /^https:\/\/.*\.zeabur\.app\/api\/(profiles|articles|stats)/i,
+              handler: 'StaleWhileRevalidate',
+              options: {
+                cacheName: 'api-list-cache',
+                expiration: {
+                  maxEntries: 100,
+                  maxAgeSeconds: 60 * 30 // 30 分鐘（5min → 30min）
+                },
+                cacheableResponse: { statuses: [0, 200] }
+              }
+            },
+            {
+              // 其他 API 用 NetworkFirst
+              urlPattern: /^https:\/\/.*\.zeabur\.app\/api\/.*/i,
               handler: 'NetworkFirst',
               options: {
                 cacheName: 'api-cache',
                 expiration: {
-                  maxEntries: 50,
-                  maxAgeSeconds: 60 * 5 // 5 minutes
+                  maxEntries: 100,
+                  maxAgeSeconds: 60 * 10 // 10 分鐘
                 },
-                networkTimeoutSeconds: 10,
-                cacheableResponse: {
-                  statuses: [0, 200]
-                }
+                networkTimeoutSeconds: 5,
+                cacheableResponse: { statuses: [0, 200] }
               }
             },
             {
+              // 圖片 — 永久快取（換圖會換 URL，所以可以放心永久快取）
               urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp)$/,
               handler: 'CacheFirst',
               options: {
                 cacheName: 'images-cache',
                 expiration: {
-                  maxEntries: 100,
-                  maxAgeSeconds: 60 * 60 * 24 * 30 // 30 days
-                }
+                  maxEntries: 500, // 100 → 500
+                  maxAgeSeconds: 60 * 60 * 24 * 90 // 30 天 → 90 天
+                },
+                cacheableResponse: { statuses: [0, 200] }
               }
             }
           ]

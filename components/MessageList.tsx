@@ -21,10 +21,10 @@ export const MessageList: React.FC = () => {
     if (isAuthenticated && user) {
       loadMessageThreads();
       
-      // 每30秒刷新一次訊息
+      // 每 2 分鐘刷新一次訊息（30s → 2min）
       const interval = setInterval(() => {
         loadMessageThreads();
-      }, 30000);
+      }, 120000);
       
       return () => clearInterval(interval);
     }

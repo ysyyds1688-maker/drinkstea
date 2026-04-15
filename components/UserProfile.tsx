@@ -1708,25 +1708,15 @@ export const UserProfile: React.FC<UserProfileProps> = ({ onProfileClick }) => {
                         <span className="ml-2 text-xs text-green-600 font-normal">✓ 已驗證</span>
                       )}
                     </label>
-                    <div className="flex gap-2 mb-2">
+                    <div className="flex flex-col sm:flex-row gap-2 mb-2 w-full">
                       <input
                         type="email"
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        className="flex-1 px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-green focus:border-brand-green text-base"
+                        className="flex-1 min-w-0 w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-green focus:border-brand-green text-base"
                         placeholder="請輸入 Email"
                         style={{ focusRingColor: '#1a5f3f' }}
                       />
-                      {formData.email && !user?.emailVerified && (
-                        <button
-                          type="button"
-                          onClick={handleSendEmailCode}
-                          disabled={isSendingEmailCode}
-                          className="px-4 py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
-                        >
-                          {isSendingEmailCode ? '發送中...' : '發送驗證碼'}
-                        </button>
-                      )}
                     </div>
                     {showEmailVerification && (
                       <div className="mt-3 flex gap-2">
@@ -1758,32 +1748,20 @@ export const UserProfile: React.FC<UserProfileProps> = ({ onProfileClick }) => {
                         <span className="ml-2 text-xs text-green-600 font-normal">✓ 已驗證</span>
                       )}
                     </label>
-                    <div className="flex gap-2 mb-2">
+                    <div className="flex flex-col sm:flex-row gap-2 mb-2 w-full">
                       <input
                         type="tel"
                         value={formData.phoneNumber}
                         onChange={(e) => {
-                          // 只允許數字
                           const value = e.target.value.replace(/[^\d]/g, '');
-                          // 限制長度為10位（台灣手機號）
                           const trimmedValue = value.slice(0, 10);
                           setFormData({ ...formData, phoneNumber: trimmedValue });
                         }}
-                        className="flex-1 px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-green focus:border-brand-green text-base"
-                        placeholder="請輸入手機號碼（格式：09XXXXXXXX）"
+                        className="flex-1 min-w-0 w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-green focus:border-brand-green text-base"
+                        placeholder="09XXXXXXXX"
                         maxLength={10}
                         style={{ focusRingColor: '#1a5f3f' }}
                       />
-                      {formData.phoneNumber && !user?.phoneVerified && (
-                        <button
-                          type="button"
-                          onClick={handleSendPhoneCode}
-                          disabled={isSendingPhoneCode}
-                          className="px-4 py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
-                        >
-                          {isSendingPhoneCode ? '發送中...' : '發送驗證碼'}
-                        </button>
-                      )}
                     </div>
                     {showPhoneVerification && (
                       <div className="mt-3 flex gap-2">

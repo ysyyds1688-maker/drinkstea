@@ -5,7 +5,7 @@ export const Footer: React.FC = () => {
   const [currentTime, setCurrentTime] = useState<string>('');
   const [onlineCount, setOnlineCount] = useState<number | null>(null);
 
-  // 更新時間（每秒更新一次）
+  // 更新時間（每分鐘更新一次即可，省效能）
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
@@ -16,42 +16,33 @@ export const Footer: React.FC = () => {
         day: '2-digit',
         hour: '2-digit',
         minute: '2-digit',
-        second: '2-digit',
         hour12: false
       });
       setCurrentTime(taiwanTimeStr);
     };
 
-    // 立即更新一次
     updateTime();
-
-    // 每秒更新一次
-    const interval = setInterval(updateTime, 1000);
-
+    // 每分鐘更新一次（不需要秒級精準度）
+    const interval = setInterval(updateTime, 60000);
     return () => clearInterval(interval);
   }, []);
 
-  // 獲取在線人數（每30秒更新一次）
+  // 獲取在線人數（每 5 分鐘更新一次，省 API 流量）
   useEffect(() => {
     const fetchOnlineCount = async () => {
       try {
         const data = await statsApi.getOnlineCount();
         setOnlineCount(data.onlineCount || 0);
       } catch (error) {
-        // 靜默處理錯誤，不顯示在控制台（避免重複錯誤訊息）
-        // 如果獲取失敗，保持當前值或設為 null
         if (onlineCount === null) {
-          setOnlineCount(0); // 首次失敗時設為0，避免顯示"載入中..."
+          setOnlineCount(0);
         }
       }
     };
 
-    // 立即獲取一次
     fetchOnlineCount();
-
-    // 每30秒更新一次
-    const interval = setInterval(fetchOnlineCount, 30000);
-
+    // 每 5 分鐘更新一次（30s → 5min，請求量降 90%）
+    const interval = setInterval(fetchOnlineCount, 300000);
     return () => clearInterval(interval);
   }, []);
 

@@ -37,10 +37,10 @@ export const NotificationBox: React.FC = () => {
         loadNotifications();
       }, 1500); // 延遲 1.5 秒載入
       
-      // 每15秒刷新一次通知（縮短間隔以提升即時性）
+      // 每 2 分鐘刷新一次通知（15s → 2min，省 API 流量）
       intervalRef.current = setInterval(() => {
         loadNotifications();
-      }, 15000);
+      }, 120000);
       
       // 監聽預約和消息相關事件，即時更新通知
       const handleBookingCreated = () => {

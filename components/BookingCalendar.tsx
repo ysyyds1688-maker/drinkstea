@@ -28,10 +28,10 @@ export const BookingCalendar: React.FC<BookingCalendarProps> = ({ profileId, pro
     window.addEventListener('booking-updated', handleBookingUpdate);
     window.addEventListener('booking-status-changed', handleBookingUpdate);
     
-    // 定期刷新（每30秒檢查一次新預約）
+    // 定期刷新（30s → 3min，事件驅動為主，定期為輔）
     const refreshInterval = setInterval(() => {
       loadBookings();
-    }, 30000);
+    }, 180000);
     
     return () => {
       window.removeEventListener('booking-created', handleBookingUpdate);
