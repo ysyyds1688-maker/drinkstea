@@ -817,15 +817,80 @@ export const ProfileDetail: React.FC<ProfileDetailProps> = ({ profile, onBack })
         />
       )}
 
-      {lightboxIndex !== null && (
-          <div className="fixed inset-0 z-[100] bg-brand-black/95 backdrop-blur-xl flex items-center justify-center animate-fade-in" onClick={closeLightbox}>
-              <button className="absolute top-8 right-8 text-white text-5xl z-[110]" onClick={closeLightbox} onMouseEnter={(e) => e.currentTarget.style.color = '#86efac'} onMouseLeave={(e) => e.currentTarget.style.color = 'white'}>&times;</button>
+      {lightboxIndex !== null && (() => {
+          const total = displayImages.length;
+          const goPrev = (e?: React.MouseEvent | React.TouchEvent) => {
+              e?.stopPropagation();
+              setLightboxIndex((i) => (i === null ? null : (i - 1 + total) % total));
+          };
+          const goNext = (e?: React.MouseEvent | React.TouchEvent) => {
+              e?.stopPropagation();
+              setLightboxIndex((i) => (i === null ? null : (i + 1) % total));
+          };
+          let touchStartX = 0;
+          let touchStartY = 0;
+          const onTouchStart = (e: React.TouchEvent) => {
+              touchStartX = e.touches[0].clientX;
+              touchStartY = e.touches[0].clientY;
+          };
+          const onTouchEnd = (e: React.TouchEvent) => {
+              const dx = e.changedTouches[0].clientX - touchStartX;
+              const dy = e.changedTouches[0].clientY - touchStartY;
+              if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) {
+                  if (dx < 0) goNext(); else goPrev();
+              }
+          };
+          return (
+          <div
+              className="fixed inset-0 z-[100] bg-brand-black/95 flex items-center justify-center animate-fade-in"
+              onClick={closeLightbox}
+              onTouchStart={onTouchStart}
+              onTouchEnd={onTouchEnd}
+              onKeyDown={(e) => {
+                  if (e.key === 'ArrowLeft') goPrev();
+                  else if (e.key === 'ArrowRight') goNext();
+                  else if (e.key === 'Escape') closeLightbox();
+              }}
+              tabIndex={0}
+              ref={(el) => el?.focus()}
+          >
+              <button className="absolute top-6 right-6 text-white text-4xl z-[110] w-12 h-12 flex items-center justify-center bg-black/40 rounded-full" onClick={closeLightbox}>&times;</button>
+
+              {total > 1 && (
+                  <button
+                      className="absolute left-3 md:left-8 top-1/2 -translate-y-1/2 z-[110] w-12 h-12 md:w-14 md:h-14 flex items-center justify-center bg-black/50 hover:bg-black/70 text-white text-3xl rounded-full"
+                      onClick={goPrev}
+                      aria-label="上一張"
+                  >
+                      ‹
+                  </button>
+              )}
+
               <div className="max-w-5xl max-h-[90vh] w-full px-4 flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
-                  <img src={getImageUrl(displayImages[lightboxIndex])} alt="Lightbox" className="max-h-[85vh] max-w-full object-contain rounded-2xl shadow-2xl border-4 border-white/10" loading="lazy" decoding="async" />
+                  <img
+                      src={getImageUrl(displayImages[lightboxIndex])}
+                      alt="Lightbox"
+                      className="max-h-[85vh] max-w-full object-contain rounded-2xl shadow-2xl border-4 border-white/10 select-none"
+                      draggable={false}
+                      loading="lazy"
+                      decoding="async"
+                  />
               </div>
-              <div className="absolute bottom-10 text-white/40 text-xs font-black tracking-[0.5em] uppercase">Private Gallery • {lightboxIndex + 1} / {displayImages.length}</div>
+
+              {total > 1 && (
+                  <button
+                      className="absolute right-3 md:right-8 top-1/2 -translate-y-1/2 z-[110] w-12 h-12 md:w-14 md:h-14 flex items-center justify-center bg-black/50 hover:bg-black/70 text-white text-3xl rounded-full"
+                      onClick={goNext}
+                      aria-label="下一張"
+                  >
+                      ›
+                  </button>
+              )}
+
+              <div className="absolute bottom-10 text-white/60 text-xs font-black tracking-[0.5em] uppercase">Private Gallery • {lightboxIndex + 1} / {total}</div>
           </div>
-      )}
+          );
+      })()}
     </div>
   );
 };
