@@ -1,8 +1,0 @@
-{
-  "ignore_dockerfile": true,
-  "node": {
-    "node_version": "20",
-    "build_command": "VITE_API_BASE_URL=https://backenddrinktea.zeabur.app npm run build",
-    "output_dir": "dist"
-  }
-}
