@@ -96,8 +96,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, initialMode = 'lo
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={onClose}>
-      <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4" onClick={(e) => e.stopPropagation()}>
+    <div className="fixed inset-0 bg-black/50 flex items-start sm:items-center justify-center z-50 p-2 sm:p-4 overflow-y-auto" onClick={onClose}>
+      <div className="bg-white rounded-2xl p-4 sm:p-6 max-w-md w-full mx-2 my-4 max-h-[95vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-xl font-bold">
             {mode === 'login' ? '登錄' : '註冊'}

@@ -69,12 +69,42 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     return !userData.lastLoginAt && welcomeShown !== 'true';
   };
 
+  // TG Web App 自動登入
+  const tryTelegramWebAppLogin = async (): Promise<boolean> => {
+    const tg = (window as any).Telegram?.WebApp;
+    if (!tg || !tg.initData) return false;
+    try {
+      const { API_BASE_URL } = await import('../config/api');
+      const resp = await fetch(`${API_BASE_URL}/api/tg/webapp-login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ initData: tg.initData }),
+      });
+      if (!resp.ok) return false;
+      const data = await resp.json();
+      if (!data.bound || !data.token) return false;
+      localStorage.setItem('auth_token', data.token);
+      if (data.refreshToken) localStorage.setItem('refresh_token', data.refreshToken);
+      setUser(data.user);
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
   // 从localStorage恢复token和用户信息
   useEffect(() => {
     const initAuth = async () => {
+      // TG Web App 優先：若是 TG 開啟且已綁定，自動登入
+      const tgLoggedIn = await tryTelegramWebAppLogin();
+      if (tgLoggedIn) {
+        setLoading(false);
+        return;
+      }
+
       const token = localStorage.getItem('auth_token');
       const savedUser = localStorage.getItem('auth_user');
-      
+
       if (token && savedUser) {
         try {
           const userData = JSON.parse(savedUser);
