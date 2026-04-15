@@ -978,10 +978,10 @@ const App: React.FC = () => {
                                         height={533}
                                     />
                                     
-                                    {/* 收藏按钮 */}
-                                    {isAuthenticated && user?.role === 'client' && (
+                                    {/* 收藏按钮 - 所有人都看得到 */}
+                                    <div className="absolute top-5 right-5 z-20">
                                       <FavoriteButton profileId={p.id} />
-                                    )}
+                                    </div>
                                     
                                     {/* 原有的標籤和文字 */}
                                     <div className="absolute top-5 left-5 flex flex-col gap-2 z-10">

@@ -100,7 +100,20 @@ export const FavoriteButton: React.FC<FavoriteButtonProps> = ({ profileId }) => 
   };
 
   if (!isAuthenticated) {
-    return null;
+    return (
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          alert('請先登入/註冊，即可收藏小姐到我的最愛！\n\n綁定 Telegram 後，在 TG Bot 也能查看收藏 ❤️');
+        }}
+        className="p-2 rounded-full bg-white/90 backdrop-blur-sm shadow-lg text-gray-400 hover:text-red-400 transition-all hover:scale-110"
+        title="登入後即可收藏"
+      >
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+        </svg>
+      </button>
+    );
   }
 
   if (isLoading) {
