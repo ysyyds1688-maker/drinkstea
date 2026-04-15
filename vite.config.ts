@@ -147,7 +147,19 @@ export default defineConfig(({ mode }) => {
       'import.meta.env.VITE_API_KEY': JSON.stringify(apiKey) 
     },
     build: {
-      target: 'esnext'
+      target: 'esnext',
+      // 拆分 vendor chunks — 首頁載入從 735KB → 主檔 ~300KB
+      // 第三方庫單獨快取（更新程式碼時瀏覽器不用重下 vendor）
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            'react-vendor': ['react', 'react-dom'],
+            'charts': ['recharts'],
+          },
+        },
+      },
+      // 大型依賴警告門檻調高（recharts 本來就大）
+      chunkSizeWarningLimit: 600,
     }
   };
 });
