@@ -175,31 +175,6 @@ export const SidebarFilter: React.FC<SidebarFilterProps> = ({ filters, setFilter
             </div>
           </section>
 
-          {/* 身材類別 */}
-          <section>
-            <h3 className="text-xs font-black text-gray-400 uppercase tracking-[0.2em] mb-4">身材條件</h3>
-            <div className="flex flex-wrap gap-2">
-              {bodyTypes.map(b => (
-                <button
-                  key={b}
-                  onClick={() => toggleArrayFilter('bodyTypes', b)}
-                  className={`px-3 py-2 rounded-xl text-xs font-bold transition-all border ${
-                    (b === '全部' && filters.bodyTypes.length === 0) || filters.bodyTypes.includes(b)
-                    ? 'text-white' 
-                    : 'bg-white border-gray-100 text-gray-500'
-                  }`}
-                  style={((b === '全部' && filters.bodyTypes.length === 0) || filters.bodyTypes.includes(b)) ? {
-                    backgroundColor: '#1a5f3f',
-                    borderColor: '#1a5f3f'
-                  } : {
-                    borderColor: 'rgba(26, 95, 63, 0.2)'
-                  }}
-                >
-                  {b}
-                </button>
-              ))}
-            </div>
-          </section>
 
           {/* 罩杯大小 */}
           <section>

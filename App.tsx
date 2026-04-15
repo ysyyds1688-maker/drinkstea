@@ -561,14 +561,14 @@ const App: React.FC = () => {
                pNat.includes(filterText) || pNat.includes(filterFlag);
       });
       const matchCup = filters.cup.length === 0 || filters.cup.includes(p.cup);
-      // 價格過濾：用 priceRange (預算上限)
-      const matchPrice = !filters.priceRange || filters.priceRange[1] >= 200000 || (priceValue > 0 && priceValue <= filters.priceRange[1]) || priceValue <= 0;
+      // 價格過濾：拉 slider 後，沒價格的小姐也要被過濾掉
+      const priceLimit = filters.priceRange ? filters.priceRange[1] : 200000;
+      const noPriceFilter = !filters.priceRange || priceLimit >= 200000;
+      const matchPrice = noPriceFilter || (priceValue > 0 && priceValue <= priceLimit);
       // 年齡過濾：實際比對範圍
       const matchAge = !filters.ageRange || (p.age >= filters.ageRange[0] && p.age <= filters.ageRange[1]);
-      // 身材條件
-      const matchBody = filters.bodyTypes.length === 0 || filters.bodyTypes.some(tag => tags.includes(tag));
 
-      const shouldShow = matchType && matchLoc && matchNat && matchCup && matchPrice && matchAge && matchBody;
+      const shouldShow = matchType && matchLoc && matchNat && matchCup && matchPrice && matchAge;
       
       return shouldShow;
     });
