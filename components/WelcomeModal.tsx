@@ -12,6 +12,7 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({ isOpen, onClose, use
   const [textVisible, setTextVisible] = useState(false);
   const [subtitleVisible, setSubtitleVisible] = useState(false);
   const [buttonVisible, setButtonVisible] = useState(false);
+  const [step, setStep] = useState<1 | 2>(1);
 
   useEffect(() => {
     if (isOpen) {
@@ -21,11 +22,11 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({ isOpen, onClose, use
       setTimeout(() => setSubtitleVisible(true), 800);
       setTimeout(() => setButtonVisible(true), 1200);
     } else {
-      // 重置動畫狀態
       setIsVisible(false);
       setTextVisible(false);
       setSubtitleVisible(false);
       setButtonVisible(false);
+      setStep(1);
     }
   }, [isOpen]);
 
@@ -216,36 +217,67 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({ isOpen, onClose, use
             {message.description}
           </p>
 
-          {/* 按鈕 */}
-          <button
-            className={`welcome-button ${
-              buttonVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-            }`}
-            onClick={onClose}
-            style={{
-              transition: 'all 0.5s ease-out 0.6s',
-              padding: '0.875rem 2.5rem',
-              borderRadius: '0.75rem',
-              fontSize: '1rem',
-              fontWeight: 700,
-              letterSpacing: '0.05em',
-              color: 'white',
-              background: 'linear-gradient(135deg, #1a5f3f 0%, #15803d 100%)',
-              boxShadow: '0 4px 6px -1px rgba(26, 95, 63, 0.3), 0 2px 4px -1px rgba(26, 95, 63, 0.2)',
-              border: 'none',
-              cursor: 'pointer',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.boxShadow = '0 6px 8px -1px rgba(26, 95, 63, 0.4), 0 4px 6px -1px rgba(26, 95, 63, 0.3)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(26, 95, 63, 0.3), 0 2px 4px -1px rgba(26, 95, 63, 0.2)';
-            }}
-          >
-            開始探索
-          </button>
+          {step === 1 ? (
+            /* Step 1: 歡迎 → 下一步 */
+            <button
+              className={`welcome-button ${buttonVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+              onClick={() => setStep(2)}
+              style={{
+                transition: 'all 0.5s ease-out 0.6s',
+                padding: '0.875rem 2.5rem',
+                borderRadius: '0.75rem',
+                fontSize: '1rem',
+                fontWeight: 700,
+                letterSpacing: '0.05em',
+                color: 'white',
+                background: 'linear-gradient(135deg, #1a5f3f 0%, #15803d 100%)',
+                boxShadow: '0 4px 6px -1px rgba(26, 95, 63, 0.3), 0 2px 4px -1px rgba(26, 95, 63, 0.2)',
+                border: 'none',
+                cursor: 'pointer',
+              }}
+            >
+              下一步
+            </button>
+          ) : (
+            /* Step 2: TG 綁定提醒 */
+            <div className="text-left space-y-4 welcome-description">
+              <h3 className="text-lg font-bold text-center" style={{ color: '#1a5f3f' }}>
+                綁定 Telegram，解鎖更多功能
+              </h3>
+              <ul className="space-y-2 text-sm text-gray-600">
+                <li className="flex items-start gap-2">
+                  <svg className="w-4 h-4 mt-0.5 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                  收藏的小姐自動同步到 TG Bot
+                </li>
+                <li className="flex items-start gap-2">
+                  <svg className="w-4 h-4 mt-0.5 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                  忘記密碼時可從 TG 直接重設
+                </li>
+                <li className="flex items-start gap-2">
+                  <svg className="w-4 h-4 mt-0.5 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                  新上架小姐第一時間 TG 通知
+                </li>
+              </ul>
+              <div className="flex gap-3 pt-2">
+                <button
+                  onClick={() => {
+                    onClose();
+                    window.dispatchEvent(new CustomEvent('navigate-to-profile-tab'));
+                  }}
+                  className="flex-1 py-3 rounded-xl font-bold text-white text-sm"
+                  style={{ background: 'linear-gradient(135deg, #1a5f3f 0%, #15803d 100%)' }}
+                >
+                  前往綁定
+                </button>
+                <button
+                  onClick={onClose}
+                  className="flex-1 py-3 rounded-xl font-bold text-gray-500 text-sm border border-gray-200 hover:bg-gray-50"
+                >
+                  稍後再說
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* 底部裝飾線 */}
