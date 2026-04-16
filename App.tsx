@@ -807,7 +807,7 @@ const App: React.FC = () => {
           <div className="flex items-center gap-2 md:gap-10">
             <button
               className="flex items-center gap-2 cursor-pointer group"
-              onClick={() => handleNavigation('ABOUT')}
+              onClick={() => handleNavigation('HOME')}
             >
               <div className="w-[50px] h-[50px] flex items-center justify-center overflow-hidden relative flag-container" style={{
                 background: 'transparent'
