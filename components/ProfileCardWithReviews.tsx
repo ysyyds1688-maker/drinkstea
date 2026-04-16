@@ -38,8 +38,34 @@ export const ProfileCardWithReviews: React.FC<ProfileCardWithReviewsProps> = ({
   const [showAllReviews, setShowAllReviews] = useState(false);
   const [hasValidBooking, setHasValidBooking] = useState(false);
   const [isVisible, setIsVisible] = useState(false); // 追蹤組件是否在可視區域
+  const [fakeViews, setFakeViews] = useState(0);
+  const [fakeFavorites, setFakeFavorites] = useState(0);
   const cardRef = useRef<HTMLDivElement>(null);
   const { isAuthenticated, user } = useAuth();
+
+  // 動態假數字：瀏覽次數 + 收藏人數
+  useEffect(() => {
+    // 用 profile.id 做 seed，讓同一個 profile 有一致的基礎數字
+    let hash = 0;
+    for (let i = 0; i < profile.id.length; i++) {
+      hash = ((hash << 5) - hash) + profile.id.charCodeAt(i);
+      hash |= 0;
+    }
+    const baseViews = 800 + Math.abs(hash % 4200); // 800 ~ 5000
+    const baseFavs = 30 + Math.abs((hash >> 8) % 270); // 30 ~ 300
+    setFakeViews(baseViews + Math.floor(Math.random() * 50));
+    setFakeFavorites(baseFavs + Math.floor(Math.random() * 8));
+
+    // 每 15~40 秒小幅波動
+    const timer = setInterval(() => {
+      setFakeViews(v => v + Math.floor(Math.random() * 3) + 1);
+      setFakeFavorites(v => {
+        const delta = Math.random() < 0.3 ? 1 : 0; // 30% 機率 +1
+        return v + delta;
+      });
+    }, 15000 + Math.random() * 25000);
+    return () => clearInterval(timer);
+  }, [profile.id]);
   
   // 判斷是否為特選魚市（有 userId 表示是佳麗自己上架的）
   const isFishMarket = !!profile.userId;
@@ -296,18 +322,22 @@ export const ProfileCardWithReviews: React.FC<ProfileCardWithReviewsProps> = ({
               )}
             </div>
             
-            {/* 右侧：爱心数（点赞）和收藏数 - 預留空間避免 CLS */}
-            <div className="flex items-center gap-4 min-w-[80px] justify-end">
-              {/* 爱心数（点赞） */}
-              <div className="flex items-center gap-1">
-                {totalLikes > 0 && (
-                  <>
-                    <svg className="w-4 h-4 text-red-500 fill-current" viewBox="0 0 24 24">
-                      <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                    </svg>
-                    <span className="text-xs text-gray-600">{totalLikes}</span>
-                  </>
-                )}
+            {/* 右侧：瀏覽次數、收藏人數、收藏按鈕 */}
+            <div className="flex items-center gap-3 min-w-[80px] justify-end">
+              {/* 瀏覽次數（眼睛圖標） */}
+              <div className="flex items-center gap-1" title="瀏覽次數">
+                <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+                <span className="text-xs text-gray-500">{fakeViews.toLocaleString()}</span>
+              </div>
+              {/* 收藏人數（愛心圖標） */}
+              <div className="flex items-center gap-1" title="收藏人數">
+                <svg className="w-3.5 h-3.5 text-pink-400 fill-current" viewBox="0 0 24 24">
+                  <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                </svg>
+                <span className="text-xs text-gray-500">{fakeFavorites}</span>
               </div>
               
               {/* 收藏按钮（书签图标）- 照片下方信息区域 */}

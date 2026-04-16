@@ -34,6 +34,41 @@ import { getImageUrl } from './config/api';
 
 type ViewState = 'HOME' | 'NEWS' | 'PROFILE_DETAIL' | 'ADMIN_PROFILE' | 'ARTICLE_DETAIL' | 'PROVIDER_LISTING' | 'PROVIDER_DASHBOARD' | 'USER_PROFILE' | 'USER_BLOG' | 'FORUM' | 'CREATE_POST' | 'ABOUT' | 'NOT_FOUND';
 
+// 動態假數字組件
+const FakeStats: React.FC<{ id: string }> = ({ id }) => {
+  const seed = useMemo(() => {
+    let h = 0;
+    for (let i = 0; i < id.length; i++) { h = ((h << 5) - h) + id.charCodeAt(i); h |= 0; }
+    return h;
+  }, [id]);
+  const [views, setViews] = useState(() => 800 + Math.abs(seed % 4200));
+  const [favs, setFavs] = useState(() => 30 + Math.abs((seed >> 8) % 270));
+  useEffect(() => {
+    const t = setInterval(() => {
+      setViews(v => v + Math.floor(Math.random() * 3) + 1);
+      setFavs(v => v + (Math.random() < 0.3 ? 1 : 0));
+    }, 15000 + Math.random() * 25000);
+    return () => clearInterval(t);
+  }, []);
+  return (
+    <div className="px-4 py-2.5 border-t border-gray-100 flex items-center justify-end gap-3" onClick={(e) => e.preventDefault()}>
+      <div className="flex items-center gap-1">
+        <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+        </svg>
+        <span className="text-xs text-gray-500">{views.toLocaleString()}</span>
+      </div>
+      <div className="flex items-center gap-1">
+        <svg className="w-3.5 h-3.5 text-pink-400 fill-current" viewBox="0 0 24 24">
+          <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+        </svg>
+        <span className="text-xs text-gray-500">{favs}</span>
+      </div>
+    </div>
+  );
+};
+
 const App: React.FC = () => {
   // 從後端 API 獲取資料
   const [profiles, setProfiles] = useState<Profile[]>([]);
@@ -1225,9 +1260,10 @@ const App: React.FC = () => {
                                         </div>
                                     </div>
                                 </div>
+                                <FakeStats id={p.id} />
                             </a>
                         ))}
-                        
+
                         {/* 分页控件 */}
                         {totalPages > 1 && (
                           <div className="col-span-full mt-12 pb-20 flex flex-wrap items-center justify-center gap-2 sm:gap-4">
