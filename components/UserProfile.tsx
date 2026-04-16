@@ -711,26 +711,38 @@ export const UserProfile: React.FC<UserProfileProps> = ({ onProfileClick }) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // 检查文件类型
     if (!file.type.startsWith('image/')) {
       alert('請上傳圖片檔案');
       return;
     }
 
-    // 检查文件大小（限制为 5MB）
     if (file.size > 5 * 1024 * 1024) {
-      alert('图片大小不能超过 5MB');
+      alert('圖片大小不能超過 5MB');
       return;
     }
 
-    // 转换为 base64
+    // 壓縮頭像：200x200 + JPEG 品質 0.7（約 20-50KB）
     const reader = new FileReader();
     reader.onloadend = () => {
-      const base64String = reader.result as string;
-      setFormData({ ...formData, avatarUrl: base64String });
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const size = 200;
+        canvas.width = size;
+        canvas.height = size;
+        const ctx = canvas.getContext('2d')!;
+        // 裁切為正方形（取中心）
+        const minDim = Math.min(img.width, img.height);
+        const sx = (img.width - minDim) / 2;
+        const sy = (img.height - minDim) / 2;
+        ctx.drawImage(img, sx, sy, minDim, minDim, 0, 0, size, size);
+        const compressed = canvas.toDataURL('image/jpeg', 0.7);
+        setFormData({ ...formData, avatarUrl: compressed });
+      };
+      img.src = reader.result as string;
     };
     reader.onerror = () => {
-      alert('读取文件失败');
+      alert('讀取檔案失敗');
     };
     reader.readAsDataURL(file);
   };
