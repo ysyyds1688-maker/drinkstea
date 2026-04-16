@@ -1125,6 +1125,72 @@ export const UserProfile: React.FC<UserProfileProps> = ({ onProfileClick }) => {
                     </div>
                     )}
                   </div>
+                  {/* 帳號安全：修改密碼 */}
+                  <div className="pt-4 border-t border-gray-100">
+                    <details className="group">
+                      <summary className="flex items-center gap-2 cursor-pointer text-sm font-bold text-gray-700 hover:text-gray-900 select-none">
+                        <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                        帳號安全
+                        <svg className="w-3 h-3 transition-transform group-open:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                      </summary>
+                      <div className="mt-4 space-y-3 pl-6">
+                        {(() => {
+                          const pwdChangedAt = (user as any)?.passwordChangedAt;
+                          const pwdCount = (user as any)?.passwordChangeCount || 0;
+                          const cooldownDays = pwdCount <= 1 ? 7 : 30;
+                          let daysLeft = 0;
+                          if (pwdChangedAt) {
+                            const end = new Date(new Date(pwdChangedAt).getTime() + cooldownDays * 86400000);
+                            daysLeft = Math.max(0, Math.ceil((end.getTime() - Date.now()) / 86400000));
+                          }
+                          const inCooldown = daysLeft > 0;
+                          return (
+                            <form onSubmit={async (e) => {
+                              e.preventDefault();
+                              const form = e.target as HTMLFormElement;
+                              const cur = (form.elements.namedItem('curPwd') as HTMLInputElement).value;
+                              const np = (form.elements.namedItem('newPwd') as HTMLInputElement).value;
+                              const cp = (form.elements.namedItem('cfmPwd') as HTMLInputElement).value;
+                              if (np.length < 6) { alert('新密碼至少 6 字'); return; }
+                              if (np !== cp) { alert('兩次密碼不一致'); return; }
+                              try {
+                                const { API_BASE_URL } = await import('../config/api');
+                                const token = localStorage.getItem('token');
+                                const resp = await fetch(`${API_BASE_URL}/api/auth/change-password`, {
+                                  method: 'POST',
+                                  headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                                  body: JSON.stringify({ currentPassword: cur, newPassword: np }),
+                                });
+                                const data = await resp.json();
+                                if (!resp.ok) throw new Error(data.error);
+                                alert('密碼修改成功！');
+                                form.reset();
+                              } catch (err: any) {
+                                alert(err.message || '修改失敗');
+                              }
+                            }} className="space-y-2">
+                              <p className="text-xs text-gray-500">
+                                {inCooldown
+                                  ? `冷卻中，距離下次可修改還需 ${daysLeft} 天`
+                                  : pwdCount === 0 ? '首次修改後需等待 7 天才能再次修改' : `修改後需等待 ${cooldownDays} 天`}
+                              </p>
+                              <input name="curPwd" type="password" placeholder="當前密碼" disabled={inCooldown}
+                                className="w-full p-2 border border-gray-200 rounded-lg text-sm disabled:bg-gray-100 disabled:cursor-not-allowed" />
+                              <input name="newPwd" type="password" placeholder="新密碼（至少 6 字）" disabled={inCooldown}
+                                className="w-full p-2 border border-gray-200 rounded-lg text-sm disabled:bg-gray-100 disabled:cursor-not-allowed" />
+                              <input name="cfmPwd" type="password" placeholder="確認新密碼" disabled={inCooldown}
+                                className="w-full p-2 border border-gray-200 rounded-lg text-sm disabled:bg-gray-100 disabled:cursor-not-allowed" />
+                              <button type="submit" disabled={inCooldown}
+                                className="px-4 py-2 bg-gray-800 text-white text-sm rounded-lg disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-700">
+                                修改密碼
+                              </button>
+                            </form>
+                          );
+                        })()}
+                      </div>
+                    </details>
+                  </div>
+
                   <div className="pt-4 border-t border-gray-100">
                     <button
                       onClick={() => setIsEditing(true)}
