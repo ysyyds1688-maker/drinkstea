@@ -656,7 +656,35 @@ export const UserProfile: React.FC<UserProfileProps> = ({ onProfileClick }) => {
         }
       }
     }
-    
+
+    // 檢查 Email 冷卻
+    const emailChanged = formData.email !== user.email;
+    if (emailChanged && (user as any).emailChangedAt) {
+      const eCount = (user as any).emailChangeCount || 0;
+      const lastChange = new Date((user as any).emailChangedAt);
+      const cooldownDays = eCount <= 1 ? 7 : 30;
+      const cooldownEnd = new Date(lastChange.getTime() + cooldownDays * 24 * 60 * 60 * 1000);
+      if (new Date() < cooldownEnd) {
+        const daysLeft = Math.ceil((cooldownEnd.getTime() - Date.now()) / (24 * 60 * 60 * 1000));
+        alert(`Email 修改冷卻中，還需等待 ${daysLeft} 天`);
+        return;
+      }
+    }
+
+    // 檢查手機號碼冷卻
+    const phoneChanged = formData.phoneNumber !== user.phoneNumber;
+    if (phoneChanged && (user as any).phoneChangedAt) {
+      const pCount = (user as any).phoneChangeCount || 0;
+      const lastChange = new Date((user as any).phoneChangedAt);
+      const cooldownDays = pCount <= 1 ? 7 : 30;
+      const cooldownEnd = new Date(lastChange.getTime() + cooldownDays * 24 * 60 * 60 * 1000);
+      if (new Date() < cooldownEnd) {
+        const daysLeft = Math.ceil((cooldownEnd.getTime() - Date.now()) / (24 * 60 * 60 * 1000));
+        alert(`手機號碼修改冷卻中，還需等待 ${daysLeft} 天`);
+        return;
+      }
+    }
+
     setIsSaving(true);
     try {
       await authApi.updateMe({
