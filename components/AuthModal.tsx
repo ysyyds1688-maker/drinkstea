@@ -350,28 +350,30 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, initialMode = 'lo
             {forgotPasswordStep === 'request' && (
               <>
                 <div>
-                  <label className="block text-sm font-medium mb-2">Email</label>
+                  <label className="block text-sm font-medium mb-2">帳號</label>
                   <input
-                    type="email"
+                    type="text"
                     value={forgotPasswordEmail}
                     onChange={(e) => setForgotPasswordEmail(e.target.value)}
-                    placeholder="請輸入註冊時的 Email"
-                    className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-green"
+                    placeholder="請輸入註冊時的 Email 或手機號碼"
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-green"
                   />
-                  <p className="text-xs text-blue-600 mt-2 leading-relaxed">
-                    💡 我們會把驗證碼發送到您**綁定的 Telegram 帳號**<br/>
-                    （前提：曾在「茶客檔案」綁定 TG）
+                  <p className="text-xs text-blue-600 mt-2 leading-relaxed flex items-start gap-1">
+                    <svg className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <span>驗證碼將發送到您綁定的 Telegram 帳號<br/>（需先在「茶客檔案」中綁定 TG）</span>
                   </p>
                 </div>
                 <button
                   onClick={async () => {
-                    if (!forgotPasswordEmail.trim()) {
-                      setError('請輸入 Email');
+                    const val = forgotPasswordEmail.trim();
+                    if (!val) {
+                      setError('請輸入 Email 或手機號碼');
                       return;
                     }
-                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                    if (!emailRegex.test(forgotPasswordEmail.trim())) {
-                      setError('請輸入有效的 Email 格式');
+                    const isEmail = val.includes('@');
+                    const isPhone = /^[0+]\d{7,}$/.test(val);
+                    if (!isEmail && !isPhone) {
+                      setError('請輸入有效的 Email 或手機號碼');
                       return;
                     }
                     setIsSubmitting(true);
@@ -381,7 +383,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, initialMode = 'lo
                       const resp = await fetch(`${API_BASE_URL}/api/tg/forgot-password/request`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ email: forgotPasswordEmail.trim() }),
+                        body: JSON.stringify({ identifier: val }),
                       });
                       const data = await resp.json();
                       if (!resp.ok) throw new Error(data.error || '發送失敗');
@@ -394,17 +396,18 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, initialMode = 'lo
                     }
                   }}
                   disabled={isSubmitting}
-                  className="w-full py-2 bg-brand-green text-white rounded-lg hover:bg-opacity-90 disabled:opacity-50"
+                  className="w-full py-3 bg-brand-green text-white rounded-lg hover:bg-opacity-90 disabled:opacity-50 font-bold flex items-center justify-center gap-2"
                 >
-                  {isSubmitting ? '發送中...' : '📲 發送驗證碼到 Telegram'}
+                  {isSubmitting ? '發送中...' : (<><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>發送驗證碼到 Telegram</>)}
                 </button>
               </>
             )}
 
             {forgotPasswordStep === 'verify' && (
               <>
-                <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-800">
-                  ✅ 已發送驗證碼到 {tgInfo || '您綁定的 Telegram'}
+                <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-800 flex items-center gap-2">
+                  <svg className="w-4 h-4 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                  已發送驗證碼到 {tgInfo || '您綁定的 Telegram'}
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-2">驗證碼（6 位數字）</label>
@@ -460,7 +463,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, initialMode = 'lo
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
-                          email: forgotPasswordEmail.trim(),
+                          identifier: forgotPasswordEmail.trim(),
                           code: verificationCode.trim(),
                           newPassword: newPassword,
                         }),
@@ -477,7 +480,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, initialMode = 'lo
                   disabled={isSubmitting}
                   className="w-full py-3 bg-brand-green text-white rounded-lg hover:bg-opacity-90 disabled:opacity-50 font-bold"
                 >
-                  {isSubmitting ? '處理中...' : '✅ 確認重設密碼'}
+                  {isSubmitting ? '處理中...' : (<><svg className="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>確認重設密碼</>)}
                 </button>
                 <button
                   onClick={() => {
@@ -495,7 +498,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, initialMode = 'lo
 
             {forgotPasswordStep === 'result' && (
               <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-                <h4 className="font-bold text-green-900 mb-2">✅ 密碼重設成功！</h4>
+                <h4 className="font-bold text-green-900 mb-2 flex items-center gap-2"><svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>密碼重設成功！</h4>
                 <p className="text-sm text-green-800">請用新密碼登入。</p>
                 <button
                   onClick={() => {
