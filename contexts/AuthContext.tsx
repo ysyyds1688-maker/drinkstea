@@ -77,7 +77,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const { API_BASE_URL } = await import('../config/api');
       await fetch(`${API_BASE_URL}/api/tg/silent-bind`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`, 'X-Api-Key': 'tk-api-2026-secret' },
         body: JSON.stringify({ initData: tg.initData }),
       });
     } catch {
@@ -93,7 +93,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const { API_BASE_URL } = await import('../config/api');
       const resp = await fetch(`${API_BASE_URL}/api/tg/webapp-login`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'X-Api-Key': 'tk-api-2026-secret' },
         body: JSON.stringify({ initData: tg.initData }),
       });
       if (!resp.ok) return false;

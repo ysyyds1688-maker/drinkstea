@@ -36,7 +36,7 @@ export const TelegramBindCard: React.FC = () => {
     if (!token) return;
     try {
       const resp = await fetch(`${API_BASE_URL}/api/tg/status`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${token}`, 'X-Api-Key': 'tk-api-2026-secret' },
       });
       if (resp.ok) {
         const data = await resp.json();
@@ -55,7 +55,7 @@ export const TelegramBindCard: React.FC = () => {
     try {
       const resp = await fetch(`${API_BASE_URL}/api/tg/generate-code`, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json', 'X-Api-Key': 'tk-api-2026-secret' },
       });
       if (resp.ok) {
         const data = await resp.json();
@@ -76,7 +76,7 @@ export const TelegramBindCard: React.FC = () => {
     try {
       const resp = await fetch(`${API_BASE_URL}/api/tg/unbind`, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json', 'X-Api-Key': 'tk-api-2026-secret' },
       });
       const data = await resp.json();
       if (resp.ok) {
