@@ -15,7 +15,10 @@ export const OFFICIAL_LINE_URL = import.meta.env.VITE_OFFICIAL_LINE_URL || 'http
 // 獲取 CDN 優化的圖片 URL
 export const getImageUrl = (url: string): string => {
   if (!url) return '';
-  
+
+  // base64 data URI 直接返回（不加 CDN 前綴）
+  if (url.startsWith('data:')) return url;
+
   // 如果是完整 URL（http:// 或 https://），檢查是否需要替換為 CDN URL
   if (url.startsWith('http://') || url.startsWith('https://')) {
     // 優先處理後端生成的圖片 URL (包含 API_BASE_URL 或 localhost)
