@@ -779,12 +779,16 @@ const App: React.FC = () => {
             <div className="md:hidden absolute right-4 top-1/2 -translate-y-1/2 z-10 flex items-center gap-2">
               <button
                 onClick={() => handleNavigation('USER_PROFILE')}
-                className="w-10 h-10 rounded-full flex items-center justify-center text-white text-base font-bold shadow-md"
+                className="w-10 h-10 rounded-full flex items-center justify-center overflow-hidden shadow-md border-2 border-white"
                 style={{ backgroundColor: '#1a5f3f' }}
                 aria-label="個人檔案"
                 title="個人檔案"
               >
-                👤
+                {user?.avatarUrl ? (
+                  <img src={getImageUrl(user.avatarUrl)} alt="" className="w-full h-full object-cover" />
+                ) : (
+                  <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                )}
               </button>
               <NotificationBox />
             </div>
@@ -890,10 +894,19 @@ const App: React.FC = () => {
               <>
                 <button
                   onClick={() => handleNavigation('USER_PROFILE')}
-                  className="px-4 py-2 rounded-lg text-sm font-bold text-white shadow-md transition-all hover:scale-105"
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-bold text-white shadow-md transition-all hover:scale-105"
                   style={{ backgroundColor: '#1a5f3f' }}
                 >
-                  👤 {user?.userName || '個人檔案'}
+                  <div className="w-7 h-7 rounded-full overflow-hidden flex-shrink-0 border border-white/30">
+                    {user?.avatarUrl ? (
+                      <img src={getImageUrl(user.avatarUrl)} alt="" className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-white/20">
+                        <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                      </div>
+                    )}
+                  </div>
+                  {user?.userName || '個人檔案'}
                 </button>
                 <button
                   onClick={logout}
