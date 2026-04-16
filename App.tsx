@@ -1261,6 +1261,16 @@ const App: React.FC = () => {
                                     </div>
                                 </div>
                                 <FakeStats id={p.id} />
+                                {/* 評論摘要 */}
+                                {((p as any).reviewCount > 0 || (p as any).averageRating > 0) && (
+                                  <div className="px-4 py-2 border-t border-gray-100 flex items-center gap-1.5" onClick={(e) => e.preventDefault()}>
+                                    <svg className="w-3.5 h-3.5 text-yellow-400 fill-current" viewBox="0 0 24 24">
+                                      <path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                                    </svg>
+                                    <span className="text-sm font-bold text-gray-700">{((p as any).averageRating || 0).toFixed(1)}</span>
+                                    <span className="text-xs text-gray-400">({(p as any).reviewCount} 則評論)</span>
+                                  </div>
+                                )}
                             </a>
                         ))}
 
