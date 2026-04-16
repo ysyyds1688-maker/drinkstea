@@ -212,9 +212,10 @@ const apiRequestInternal = async <T>(
   const token = localStorage.getItem('auth_token');
   const headers: HeadersInit = {
     'Content-Type': 'application/json',
+    'X-Api-Key': 'tk-api-2026-secret',
     ...options.headers,
   };
-  
+
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
   }
