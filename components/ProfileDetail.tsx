@@ -141,15 +141,21 @@ export const ProfileDetail: React.FC<ProfileDetailProps> = ({ profile, onBack })
       document.body.style.overflow = 'auto';
   };
 
-  // 載入 Profile 詳情和 Provider 用戶資訊（觸發瀏覽任務）
+  // 載入 Profile 詳情和 Provider 用戶資訊（觸發瀏覽任務）+ 評論一起拿
   useEffect(() => {
     const loadProfileDetail = async () => {
       try {
-        // 調用後端 API 獲取 Profile，這會觸發瀏覽任務
+        // 調用後端 API 獲取 Profile + 評論（一次請求搞定）
         const updatedProfile = await profilesApi.getById(profile.id);
-        // 如果後端返回的數據與本地不同，可以選擇更新（但這裡我們主要目的是觸發任務）
-        if (import.meta.env.DEV) {
-          console.log('Profile 詳情已載入，瀏覽任務已觸發');
+
+        // 如果後端帶了 _reviews，直接用，省掉單獨拿評論的 API
+        if ((updatedProfile as any)?._reviews) {
+          const rd = (updatedProfile as any)._reviews;
+          setReviews(rd.reviews || []);
+          setAverageRating(rd.averageRating || 0);
+          setTotalReviews(rd.total || 0);
+          setIsLoadingReviews(false);
+          if (rd.total <= (rd.reviews || []).length) setShowAllReviews(true);
         }
         
         // 如果是特選魚市（有 userId），載入 Provider 用戶資訊
