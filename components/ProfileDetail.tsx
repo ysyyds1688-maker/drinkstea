@@ -259,8 +259,20 @@ export const ProfileDetail: React.FC<ProfileDetailProps> = ({ profile, onBack })
     }
   };
 
-  const handleReviewSubmit = () => {
-    loadReviews();
+  const handleReviewSubmit = (newReview?: Review) => {
+    if (newReview) {
+      // 即時插入新評論到列表頂部（不需要重新整理）
+      setReviews(prev => [newReview, ...prev]);
+      setTotalReviews(prev => prev + 1);
+      // 背景更新平均分
+      if (totalReviews > 0) {
+        setAverageRating(prev => Math.round(((prev * totalReviews) + newReview.rating) / (totalReviews + 1) * 10) / 10);
+      } else {
+        setAverageRating(newReview.rating);
+      }
+    } else {
+      loadReviews();
+    }
   };
 
   // 根據權限顯示評論
