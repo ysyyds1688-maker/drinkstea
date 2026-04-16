@@ -1453,6 +1453,13 @@ const App: React.FC = () => {
                 <UserProfile />
             )}
 
+            {currentView === 'USER_BLOG' && selectedUserId && (
+                <UserBlogPage
+                  userId={selectedUserId}
+                  onBack={() => handleNavigation(previousView || 'HOME')}
+                />
+            )}
+
             {currentView === 'ARTICLE_DETAIL' && selectedArticle && (
                 <ArticleDetail
                   article={selectedArticle}
