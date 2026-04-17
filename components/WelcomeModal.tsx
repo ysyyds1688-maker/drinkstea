@@ -7,276 +7,333 @@ interface WelcomeModalProps {
   userRole?: 'provider' | 'client' | 'admin';
 }
 
+interface Step {
+  icon: React.ReactNode;
+  title: string;
+  subtitle: string;
+  description: string;
+  highlights?: string[];
+  action?: { label: string; onClick: () => void; primary?: boolean };
+}
+
 export const WelcomeModal: React.FC<WelcomeModalProps> = ({ isOpen, onClose, userName, userRole }) => {
   const [isVisible, setIsVisible] = useState(false);
-  const [textVisible, setTextVisible] = useState(false);
-  const [subtitleVisible, setSubtitleVisible] = useState(false);
-  const [buttonVisible, setButtonVisible] = useState(false);
-  const [step, setStep] = useState<1 | 2>(1);
+  const [step, setStep] = useState(0);
+  const [animKey, setAnimKey] = useState(0);
 
   useEffect(() => {
     if (isOpen) {
-      // 延遲顯示動畫
-      setTimeout(() => setIsVisible(true), 100);
-      setTimeout(() => setTextVisible(true), 400);
-      setTimeout(() => setSubtitleVisible(true), 800);
-      setTimeout(() => setButtonVisible(true), 1200);
+      setTimeout(() => setIsVisible(true), 50);
+      setStep(0);
     } else {
       setIsVisible(false);
-      setTextVisible(false);
-      setSubtitleVisible(false);
-      setButtonVisible(false);
-      setStep(1);
+      setStep(0);
     }
   }, [isOpen]);
 
+  // 切換步驟時重新觸發動畫
+  useEffect(() => {
+    setAnimKey(k => k + 1);
+  }, [step]);
+
   if (!isOpen) return null;
 
-  // 根據用戶角色顯示不同的歡迎訊息
-  const getWelcomeMessage = () => {
-    const name = userName || '新朋友';
-    
-    if (userRole === 'provider') {
-      return {
-        title: `歡迎，${name}！`,
-        subtitle: '來到茶王的國度',
-        description: '您已成為後宮佳麗的一員，開始您的美好旅程吧！',
-      };
-    } else if (userRole === 'client') {
-      return {
-        title: `歡迎，${name}！`,
-        subtitle: '來到茶王的國度',
-        description: '開始探索精彩的品茶之旅，發現更多美好體驗！',
-      };
+  const name = userName || '新朋友';
+
+  // 為不同角色量身訂做步驟
+  const isProvider = userRole === 'provider';
+
+  const steps: Step[] = isProvider
+    ? [
+        // === 後宮佳麗專屬導覽 ===
+        {
+          icon: (
+            <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 2l2.5 7.5L22 10l-5.5 4.5L18 22l-6-4.5L6 22l1.5-7.5L2 10l7.5-.5L12 2z" />
+            </svg>
+          ),
+          title: `${name}，歡迎加入`,
+          subtitle: '茶王後宮佳麗',
+          description: '在這裡你可以上架個人檔案，管理預約，累積評價與成就徽章',
+        },
+        {
+          icon: (
+            <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+            </svg>
+          ),
+          title: '上架與管理檔案',
+          subtitle: '從佳麗檔案開始',
+          description: '點右上角頭像 → 佳麗檔案 → 編輯，填寫個人資料、價格、服務項目',
+          highlights: ['照片上傳支援多張相簿', '服務項目可自訂', '預約請求即時通知'],
+        },
+        {
+          icon: (
+            <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+            </svg>
+          ),
+          title: '累積好評與等級',
+          subtitle: '評價決定曝光',
+          description: '每次被評論都會累積積分與經驗值，等級越高，檔案排序越前面',
+          highlights: ['5 星好評曝光加成', '連續好評解鎖專屬成就', '完成預約自動提升等級'],
+        },
+        {
+          icon: (
+            <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+            </svg>
+          ),
+          title: '綁定 Telegram',
+          subtitle: '接收即時預約通知',
+          description: '綁定後可透過 TG 收到預約提醒、忘記密碼時也能直接重設',
+        },
+      ]
+    : [
+        // === 茶客（品茶客 / admin）導覽 ===
+        {
+          icon: (
+            <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M8 9h12a2 2 0 012 2v8a2 2 0 01-2 2H8a2 2 0 01-2-2V11a2 2 0 012-2zM6 9V7a3 3 0 013-3h6a3 3 0 013 3v2M10 13v4M14 13v4" />
+            </svg>
+          ),
+          title: `${name}，歡迎`,
+          subtitle: '茶王・一本道品茶',
+          description: '我們精選優質茶茶，接下來 30 秒帶你熟悉平台核心功能',
+        },
+        {
+          icon: (
+            <div className="flex gap-3">
+              <div className="w-14 h-14 rounded-2xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #1a5f3f 0%, #15803d 100%)' }}>
+                <span className="text-2xl">👑</span>
+              </div>
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center">
+                <span className="text-2xl">🐟</span>
+              </div>
+            </div>
+          ),
+          title: '兩大分類',
+          subtitle: '嚴選好茶 vs 特選魚市',
+          description: '依照你的需求挑選適合的茶茶',
+          highlights: [
+            '嚴選好茶：皇家精選，品質保證',
+            '特選魚市：佳麗自營，直接聯繫',
+          ],
+        },
+        {
+          icon: (
+            <svg className="w-16 h-16 text-pink-500 fill-current" viewBox="0 0 24 24">
+              <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+            </svg>
+          ),
+          title: '收藏你喜歡的',
+          subtitle: '點 ❤️ 加入我的最愛',
+          description: '收藏後綁定 TG 可同步到 Bot 隨時查看資料卡',
+          highlights: ['快速回訪不用翻找', '新上架第一時間推播', 'TG Bot 直接看資料卡'],
+        },
+        {
+          icon: (
+            <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+            </svg>
+          ),
+          title: '參考評論做決定',
+          subtitle: '真實茶客留言',
+          description: '會員等級越高能看到越多則評論，升級解鎖全部',
+          highlights: ['1 級看 1 則、6 級看 6 則', '7 級以上查看全部', 'VIP 會員不限數量'],
+        },
+        {
+          icon: (
+            <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+            </svg>
+          ),
+          title: '綁定 Telegram',
+          subtitle: '最後一步，解鎖全功能',
+          description: '收藏同步、忘記密碼重設、新妹推播都靠它',
+          highlights: ['收藏即時同步 TG Bot', '忘記密碼 TG 一鍵重設', '新上架第一時間通知'],
+        },
+      ];
+
+  const currentStep = steps[step];
+  const isLastStep = step === steps.length - 1;
+  const isFirstStep = step === 0;
+
+  const handleNext = () => {
+    if (isLastStep) {
+      // 最後一步：前往綁定 TG（導到茶客檔案頁 + 滾動到 TG 綁定卡）
+      try { localStorage.setItem('onboarding_completed', 'true'); } catch {}
+      onClose();
+      // 1. 切到 USER_PROFILE 視圖
+      window.dispatchEvent(new CustomEvent('navigate-to-profile-tab', { detail: { tab: 'profile', scrollTo: 'tg-bind' } }));
+      // 2. UserProfile 本身監聽的事件
+      window.dispatchEvent(new CustomEvent('user-profile-set-tab', { detail: { tab: 'profile' } }));
     } else {
-      return {
-        title: `歡迎，${name}！`,
-        subtitle: '來到茶王的國度',
-        description: '感謝您的加入，祝您在這裡度過愉快的時光！',
-      };
+      setStep(step + 1);
     }
   };
 
-  const message = getWelcomeMessage();
+  const handleSkip = () => {
+    // 標記已看過導覽（避免未來再跳出）
+    try {
+      localStorage.setItem('onboarding_completed', 'true');
+    } catch {}
+    onClose();
+  };
 
   return (
     <div
       className="fixed inset-0 z-[100] flex items-center justify-center p-4"
       style={{
-        backgroundColor: 'rgba(0, 0, 0, 0.7)',
-        backdropFilter: 'blur(4px)',
-        WebkitBackdropFilter: 'blur(4px)',
+        backgroundColor: 'rgba(0, 0, 0, 0.75)',
+        backdropFilter: 'blur(6px)',
+        WebkitBackdropFilter: 'blur(6px)',
       }}
-      onClick={onClose}
     >
       <div
-        className={`relative bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden ${
-          isVisible ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
-        }`}
+        className="relative bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden"
         style={{
-          transition: 'all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)',
+          transition: 'all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)',
           transform: isVisible ? 'scale(1)' : 'scale(0.95)',
           opacity: isVisible ? 1 : 0,
         }}
-        onClick={(e) => e.stopPropagation()}
       >
-        {/* 背景裝飾 */}
-        <div
-          className="absolute top-0 left-0 right-0 h-2"
-          style={{
-            background: 'linear-gradient(90deg, #1a5f3f 0%, #15803d 50%, #1a5f3f 100%)',
-            backgroundSize: '200% 100%',
-            animation: 'shimmer 2s infinite',
-          }}
-        />
-        
         <style>{`
-          @keyframes shimmer {
-            0% { background-position: -200% 0; }
-            100% { background-position: 200% 0; }
+          @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
           }
-          
-          @keyframes fadeInUp {
-            from {
-              opacity: 0;
-              transform: translateY(20px);
-            }
-            to {
-              opacity: 1;
-              transform: translateY(0);
-            }
-          }
-          
           @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
           }
-          
           @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
           }
-          
-          @keyframes sparkle {
-            0%, 100% { opacity: 0; transform: scale(0); }
-            50% { opacity: 1; transform: scale(1); }
-          }
-          
-          .welcome-title {
-            animation: fadeInUp 0.6s ease-out;
-          }
-          
-          .welcome-subtitle {
-            animation: fadeInUp 0.6s ease-out 0.2s both;
-          }
-          
-          .welcome-description {
-            animation: fadeIn 0.8s ease-out 0.4s both;
-          }
-          
-          .welcome-button {
-            animation: fadeInUp 0.5s ease-out 0.6s both;
-          }
-          
-          .tea-icon {
-            animation: float 3s ease-in-out infinite;
-          }
-          
-          .sparkle {
-            animation: sparkle 1.5s ease-in-out infinite;
-          }
+          .step-icon { animation: float 3s ease-in-out infinite; }
+          .step-title { animation: slideInUp 0.4s ease-out both; }
+          .step-subtitle { animation: slideInUp 0.4s ease-out 0.1s both; }
+          .step-desc { animation: slideInUp 0.4s ease-out 0.2s both; }
+          .step-highlight { animation: slideInUp 0.4s ease-out 0.3s both; }
+          .step-button { animation: slideInUp 0.4s ease-out 0.4s both; }
         `}</style>
 
+        {/* 頂部進度條 */}
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gray-100">
+          <div
+            className="h-full transition-all duration-500 ease-out"
+            style={{
+              width: `${((step + 1) / steps.length) * 100}%`,
+              background: 'linear-gradient(90deg, #1a5f3f 0%, #15803d 100%)',
+            }}
+          />
+        </div>
+
+        {/* 跳過按鈕 */}
+        {!isLastStep && (
+          <button
+            onClick={handleSkip}
+            className="absolute top-4 right-4 text-xs text-gray-400 hover:text-gray-600 px-3 py-1 z-10"
+          >
+            跳過導覽
+          </button>
+        )}
+
         {/* 內容 */}
-        <div className="p-8 pt-12 text-center relative">
-          {/* 裝飾圖標 - 茶葉 */}
-          <div className="mb-6 tea-icon">
-            <div className="relative inline-block">
-              <div
-                className="text-6xl mb-2"
-                style={{
-                  background: 'linear-gradient(135deg, #1a5f3f 0%, #15803d 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                  filter: 'drop-shadow(0 4px 6px rgba(26, 95, 63, 0.3))',
-                }}
-              >
-                🍵
-              </div>
-              
-              {/* 閃爍效果 */}
-              <div className="absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center">
-                <span className="sparkle text-2xl" style={{ animationDelay: '0s' }}>✨</span>
-                <span className="sparkle text-xl" style={{ animationDelay: '0.5s' }}>✨</span>
-                <span className="sparkle text-lg" style={{ animationDelay: '1s' }}>✨</span>
-              </div>
-            </div>
+        <div key={animKey} className="p-8 pt-12 text-center">
+          {/* Icon */}
+          <div className="mb-5 flex items-center justify-center step-icon" style={{ color: '#1a5f3f' }}>
+            {currentStep.icon}
           </div>
 
           {/* 標題 */}
-          <h2
-            className={`text-3xl font-black mb-4 welcome-title ${
-              textVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-            }`}
-            style={{
-              transition: 'all 0.6s ease-out',
-              color: '#1a5f3f',
-              textShadow: '0 2px 4px rgba(26, 95, 63, 0.2)',
-            }}
-          >
-            {message.title}
+          <h2 className="text-2xl font-black mb-2 step-title" style={{ color: '#1a5f3f' }}>
+            {currentStep.title}
           </h2>
 
           {/* 副標題 */}
           <p
-            className={`text-xl font-bold mb-6 welcome-subtitle ${
-              subtitleVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-            }`}
+            className="text-lg font-bold mb-4 step-subtitle"
             style={{
-              transition: 'all 0.6s ease-out 0.2s',
               background: 'linear-gradient(135deg, #1a5f3f 0%, #15803d 100%)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text',
             }}
           >
-            {message.subtitle}
+            {currentStep.subtitle}
           </p>
 
           {/* 描述 */}
-          <p
-            className={`text-gray-600 mb-8 welcome-description ${
-              subtitleVisible ? 'opacity-100' : 'opacity-0'
-            }`}
-            style={{
-              transition: 'opacity 0.8s ease-out 0.4s',
-              lineHeight: '1.8',
-            }}
-          >
-            {message.description}
+          <p className="text-gray-600 text-sm mb-5 leading-relaxed step-desc">
+            {currentStep.description}
           </p>
 
-          {step === 1 ? (
-            /* Step 1: 歡迎 → 下一步 */
+          {/* Highlights（重點） */}
+          {currentStep.highlights && (
+            <ul className="space-y-2 text-sm text-gray-700 mb-6 text-left bg-gray-50 rounded-xl p-4 step-highlight">
+              {currentStep.highlights.map((h, i) => (
+                <li key={i} className="flex items-start gap-2">
+                  <svg className="w-4 h-4 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5} style={{ color: '#1a5f3f' }}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>{h}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+
+          {/* 步驟指示器（圓點） */}
+          <div className="flex items-center justify-center gap-1.5 mb-5">
+            {steps.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setStep(i)}
+                className="transition-all"
+                style={{
+                  width: i === step ? '24px' : '8px',
+                  height: '8px',
+                  borderRadius: '4px',
+                  backgroundColor: i === step ? '#1a5f3f' : '#d1d5db',
+                  border: 'none',
+                  cursor: 'pointer',
+                }}
+                aria-label={`步驟 ${i + 1}`}
+              />
+            ))}
+          </div>
+
+          {/* 按鈕 */}
+          <div className="flex gap-3 step-button">
+            {!isFirstStep && (
+              <button
+                onClick={() => setStep(step - 1)}
+                className="flex-1 py-3 rounded-xl font-bold text-sm text-gray-600 border border-gray-200 hover:bg-gray-50 transition"
+              >
+                上一步
+              </button>
+            )}
             <button
-              className={`welcome-button ${buttonVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
-              onClick={() => setStep(2)}
+              onClick={handleNext}
+              className="flex-[2] py-3 rounded-xl font-bold text-sm text-white transition"
               style={{
-                transition: 'all 0.5s ease-out 0.6s',
-                padding: '0.875rem 2.5rem',
-                borderRadius: '0.75rem',
-                fontSize: '1rem',
-                fontWeight: 700,
-                letterSpacing: '0.05em',
-                color: 'white',
                 background: 'linear-gradient(135deg, #1a5f3f 0%, #15803d 100%)',
-                boxShadow: '0 4px 6px -1px rgba(26, 95, 63, 0.3), 0 2px 4px -1px rgba(26, 95, 63, 0.2)',
-                border: 'none',
-                cursor: 'pointer',
+                boxShadow: '0 4px 10px -1px rgba(26, 95, 63, 0.4)',
               }}
             >
-              下一步
+              {isLastStep ? '前往綁定 TG' : '下一步'}
             </button>
-          ) : (
-            /* Step 2: TG 綁定提醒 */
-            <div className="text-left space-y-4 welcome-description">
-              <h3 className="text-lg font-bold text-center" style={{ color: '#1a5f3f' }}>
-                綁定 Telegram，解鎖更多功能
-              </h3>
-              <ul className="space-y-2 text-sm text-gray-600">
-                <li className="flex items-start gap-2">
-                  <svg className="w-4 h-4 mt-0.5 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                  收藏的小姐自動同步到 TG Bot
-                </li>
-                <li className="flex items-start gap-2">
-                  <svg className="w-4 h-4 mt-0.5 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                  忘記密碼時可從 TG 直接重設
-                </li>
-                <li className="flex items-start gap-2">
-                  <svg className="w-4 h-4 mt-0.5 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                  新上架小姐第一時間 TG 通知
-                </li>
-              </ul>
-              <div className="flex gap-3 pt-2">
-                <button
-                  onClick={() => {
-                    onClose();
-                    window.dispatchEvent(new CustomEvent('navigate-to-profile-tab'));
-                  }}
-                  className="flex-1 py-3 rounded-xl font-bold text-white text-sm"
-                  style={{ background: 'linear-gradient(135deg, #1a5f3f 0%, #15803d 100%)' }}
-                >
-                  前往綁定
-                </button>
-                <button
-                  onClick={onClose}
-                  className="flex-1 py-3 rounded-xl font-bold text-gray-500 text-sm border border-gray-200 hover:bg-gray-50"
-                >
-                  稍後再說
-                </button>
-              </div>
-            </div>
+          </div>
+
+          {/* 跳過綁定（最後一步才出現） */}
+          {isLastStep && (
+            <button
+              onClick={handleSkip}
+              className="mt-3 text-xs text-gray-400 hover:text-gray-600"
+            >
+              稍後再說
+            </button>
           )}
         </div>
 
@@ -291,5 +348,3 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({ isOpen, onClose, use
     </div>
   );
 };
-
-

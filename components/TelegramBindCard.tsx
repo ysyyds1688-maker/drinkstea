@@ -96,7 +96,7 @@ export const TelegramBindCard: React.FC = () => {
   const canUnbind = status.canUnbind !== false && unbindCount < 2;
 
   return (
-    <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl p-5 md:p-6 border-2 border-blue-200">
+    <div data-tg-bind-card className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl p-5 md:p-6 border-2 border-blue-200">
       <div className="flex items-center gap-3 mb-4">
         <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full flex items-center justify-center shadow-md">
           <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">

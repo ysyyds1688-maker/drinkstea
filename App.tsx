@@ -529,12 +529,26 @@ const App: React.FC = () => {
       }
     };
 
+    // WelcomeModal 最後一步導到茶客檔案並滾動到 TG 綁定區塊
+    const handleNavigateToProfileTab = (event: CustomEvent) => {
+      handleNavigation('USER_PROFILE');
+      const scrollTo = event.detail?.scrollTo;
+      if (scrollTo === 'tg-bind') {
+        // 等 UserProfile 渲染後再滾動
+        setTimeout(() => {
+          const el = document.querySelector('[data-tg-bind-card]');
+          if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 400);
+      }
+    };
+
     window.addEventListener('navigate-to-user-profile', handleNavigateToUserProfile as EventListener);
     window.addEventListener('navigate-to-forum', handleNavigateToForum);
     window.addEventListener('navigate-to-forum-post', handleNavigateToForumPost as EventListener);
     window.addEventListener('navigate-to-profile', handleNavigateToProfile as EventListener);
     window.addEventListener('navigate-to-user-blog', handleNavigateToUserBlog as EventListener);
     window.addEventListener('navigate', handleNavigate as EventListener);
+    window.addEventListener('navigate-to-profile-tab', handleNavigateToProfileTab as EventListener);
 
     return () => {
       window.removeEventListener('navigate-to-user-profile', handleNavigateToUserProfile as EventListener);
@@ -543,6 +557,7 @@ const App: React.FC = () => {
       window.removeEventListener('navigate-to-profile', handleNavigateToProfile as EventListener);
       window.removeEventListener('navigate-to-user-blog', handleNavigateToUserBlog as EventListener);
       window.removeEventListener('navigate', handleNavigate as EventListener);
+      window.removeEventListener('navigate-to-profile-tab', handleNavigateToProfileTab as EventListener);
     };
   }, [profiles, currentView]);
 
@@ -1549,6 +1564,19 @@ const App: React.FC = () => {
 
       {/* 底部狀態欄：顯示時間和在線人數 */}
       <Footer />
+
+      {/* 新會員導覽 */}
+      {showWelcomeModal && (
+        <WelcomeModal
+          isOpen={showWelcomeModal}
+          onClose={() => {
+            setShowWelcomeModal(false);
+            try { localStorage.setItem('onboarding_completed', 'true'); } catch {}
+          }}
+          userName={user?.userName}
+          userRole={user?.role}
+        />
+      )}
 
       <style>{`
         .animate-fade-in-up { animation: fadeInUp 0.12s ease-out forwards; }

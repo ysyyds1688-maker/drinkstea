@@ -42,18 +42,22 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // 檢測是否為首次登入
   const checkFirstLogin = (userData: User, isRegister: boolean = false): boolean => {
     if (!userData) return false;
-    
+
+    // 已完成過導覽 → 不再顯示（跨裝置也能記住）
+    const onboardingDone = localStorage.getItem('onboarding_completed');
+    if (onboardingDone === 'true') return false;
+
     // 如果是註冊，一定是首次登入
     if (isRegister) {
       return true;
     }
-    
-    // 檢查是否已經顯示過歡迎訊息
+
+    // 檢查是否已經顯示過歡迎訊息（單一用戶 ID 專屬）
     const welcomeShown = localStorage.getItem(`welcome_shown_${userData.id}`);
     if (welcomeShown === 'true') {
       return false;
     }
-    
+
     // 判斷是否為首次登入：
     // lastLoginAt 為空或與 createdAt 非常接近（首次登入）
     if (userData.createdAt && userData.lastLoginAt) {
@@ -63,9 +67,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       // 如果最後登入時間與註冊時間相差不到 10 分鐘，認為是首次登入
       return diff < 10 * 60 * 1000;
     }
-    
+
     // 如果沒有 lastLoginAt，可能是首次登入
-    // 但需要檢查是否已經顯示過歡迎訊息
     return !userData.lastLoginAt && welcomeShown !== 'true';
   };
 
