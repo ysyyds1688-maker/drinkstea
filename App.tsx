@@ -111,13 +111,23 @@ const App: React.FC = () => {
   
   const { user, isAuthenticated, logout, showWelcomeModal, setShowWelcomeModal } = useAuth();
 
-  // 支援 ?preview=onboarding URL 參數（測試用，讓 QA 能預覽導覽）
+  // 手動開啟導覽的 state（茶客檔案按鈕觸發）
+  const [manualOnboarding, setManualOnboarding] = useState(false);
+
+  // 支援 ?preview=onboarding URL 參數（測試用）
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get('preview') === 'onboarding') {
       setShowWelcomeModal(true);
     }
   }, [setShowWelcomeModal]);
+
+  // 監聽茶客檔案點「重新查看導覽」事件
+  useEffect(() => {
+    const handleManualOpen = () => setManualOnboarding(true);
+    window.addEventListener('open-onboarding-tour', handleManualOpen);
+    return () => window.removeEventListener('open-onboarding-tour', handleManualOpen);
+  }, []);
 
   // 不再顯示首次進入遮罩，直接顯示內容
 
@@ -1573,16 +1583,17 @@ const App: React.FC = () => {
       {/* 底部狀態欄：顯示時間和在線人數 */}
       <Footer />
 
-      {/* 新會員導覽 */}
-      {showWelcomeModal && (
+      {/* 新會員導覽（自動/手動開啟） */}
+      {(showWelcomeModal || manualOnboarding) && (
         <WelcomeModal
-          isOpen={showWelcomeModal}
+          isOpen={showWelcomeModal || manualOnboarding}
           onClose={() => {
             setShowWelcomeModal(false);
-            try { localStorage.setItem('onboarding_completed', 'true'); } catch {}
+            setManualOnboarding(false);
           }}
           userName={user?.userName}
           userRole={user?.role}
+          isManualOpen={manualOnboarding}
         />
       )}
 

@@ -1,10 +1,30 @@
 import React, { useEffect, useState } from 'react';
+import { API_BASE_URL } from '../config/api';
+
+// 通知後端「已完成導覽」— 下次登入不再顯示
+async function markOnboardingDone() {
+  const token = localStorage.getItem('auth_token');
+  if (!token) return;
+  try {
+    await fetch(`${API_BASE_URL}/api/auth/complete-onboarding`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+        'X-Api-Key': 'tk-api-2026-secret',
+      },
+    });
+  } catch {
+    // 失敗不影響關閉
+  }
+}
 
 interface WelcomeModalProps {
   isOpen: boolean;
   onClose: () => void;
   userName?: string;
   userRole?: 'provider' | 'client' | 'admin';
+  isManualOpen?: boolean; // 手動開啟（茶客檔案裡點的）→ 不標記完成
 }
 
 interface Step {
@@ -16,7 +36,7 @@ interface Step {
   action?: { label: string; onClick: () => void; primary?: boolean };
 }
 
-export const WelcomeModal: React.FC<WelcomeModalProps> = ({ isOpen, onClose, userName, userRole }) => {
+export const WelcomeModal: React.FC<WelcomeModalProps> = ({ isOpen, onClose, userName, userRole, isManualOpen = false }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [step, setStep] = useState(0);
   const [animKey, setAnimKey] = useState(0);
@@ -165,26 +185,29 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({ isOpen, onClose, use
   const isLastStep = step === steps.length - 1;
   const isFirstStep = step === 0;
 
+  // 關閉時標記（手動開啟的不標記，因為用戶只是複習）
+  const finishAndClose = () => {
+    if (!isManualOpen) {
+      markOnboardingDone();
+    }
+    onClose();
+  };
+
   const handleNext = () => {
     if (isLastStep) {
-      // 最後一步：前往綁定 TG（導到茶客檔案頁 + 滾動到 TG 綁定卡）
-      try { localStorage.setItem('onboarding_completed', 'true'); } catch {}
-      onClose();
-      // 1. 切到 USER_PROFILE 視圖
-      window.dispatchEvent(new CustomEvent('navigate-to-profile-tab', { detail: { tab: 'profile', scrollTo: 'tg-bind' } }));
-      // 2. UserProfile 本身監聽的事件
-      window.dispatchEvent(new CustomEvent('user-profile-set-tab', { detail: { tab: 'profile' } }));
+      finishAndClose();
+      // 手動開啟的也不跳轉到 TG 綁定，只關閉 modal
+      if (!isManualOpen) {
+        window.dispatchEvent(new CustomEvent('navigate-to-profile-tab', { detail: { tab: 'profile', scrollTo: 'tg-bind' } }));
+        window.dispatchEvent(new CustomEvent('user-profile-set-tab', { detail: { tab: 'profile' } }));
+      }
     } else {
       setStep(step + 1);
     }
   };
 
   const handleSkip = () => {
-    // 標記已看過導覽（避免未來再跳出）
-    try {
-      localStorage.setItem('onboarding_completed', 'true');
-    } catch {}
-    onClose();
+    finishAndClose();
   };
 
   return (

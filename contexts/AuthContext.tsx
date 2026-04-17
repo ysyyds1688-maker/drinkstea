@@ -40,36 +40,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [showWelcomeModal, setShowWelcomeModal] = useState(false);
 
   // 檢測是否為首次登入
-  const checkFirstLogin = (userData: User, isRegister: boolean = false): boolean => {
+  // 唯一判斷依據：後端 onboardingCompleted 欄位
+  // 此帳號在任何裝置完成過導覽（或曾登入過）→ 不再顯示
+  const checkFirstLogin = (userData: User, _isRegister: boolean = false): boolean => {
     if (!userData) return false;
-
-    // 已完成過導覽 → 不再顯示（跨裝置也能記住）
-    const onboardingDone = localStorage.getItem('onboarding_completed');
-    if (onboardingDone === 'true') return false;
-
-    // 如果是註冊，一定是首次登入
-    if (isRegister) {
-      return true;
-    }
-
-    // 檢查是否已經顯示過歡迎訊息（單一用戶 ID 專屬）
-    const welcomeShown = localStorage.getItem(`welcome_shown_${userData.id}`);
-    if (welcomeShown === 'true') {
-      return false;
-    }
-
-    // 判斷是否為首次登入：
-    // lastLoginAt 為空或與 createdAt 非常接近（首次登入）
-    if (userData.createdAt && userData.lastLoginAt) {
-      const createdAt = new Date(userData.createdAt).getTime();
-      const lastLoginAt = new Date(userData.lastLoginAt).getTime();
-      const diff = lastLoginAt - createdAt;
-      // 如果最後登入時間與註冊時間相差不到 10 分鐘，認為是首次登入
-      return diff < 10 * 60 * 1000;
-    }
-
-    // 如果沒有 lastLoginAt，可能是首次登入
-    return !userData.lastLoginAt && welcomeShown !== 'true';
+    // 後端明確已完成 → 不顯示
+    if ((userData as any).onboardingCompleted === true) return false;
+    // 否則顯示（僅限真正的新帳號）
+    return true;
   };
 
   // 手動登入/註冊後，若在 TG Mini App 裡就自動綁定 TG
