@@ -38,6 +38,7 @@ export interface Album {
 export interface Profile {
   id: string;
   userId?: string; // 關聯的用戶ID，如果為空則表示是後台管理員上架的
+  category?: 'premium_tea' | 'fish_market'; // 嚴選好茶 vs 特選魚市
   name: string;
   nationality: string;
   age: number;

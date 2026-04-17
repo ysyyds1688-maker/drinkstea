@@ -123,8 +123,8 @@ export const ProviderListingPage: React.FC<ProviderListingPageProps> = ({ onProf
     // 先应用搜索
     let result = searchProfiles(profiles, searchQuery);
     
-    // 特選鮮魚頁面只顯示由Provider用戶自己上架的profiles（userId不為空）
-    result = result.filter(p => p.userId != null && p.userId !== '');
+    // 特選魚市只顯示 category = 'fish_market' 的 profiles（由管理員上架）
+    result = result.filter(p => (p as any).category === 'fish_market');
     
     const filtered = result.filter(p => {
       if (filters.type !== 'all' && p.type !== filters.type) return false;

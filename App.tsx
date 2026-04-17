@@ -111,23 +111,19 @@ const App: React.FC = () => {
   
   const { user, isAuthenticated, logout, showWelcomeModal, setShowWelcomeModal } = useAuth();
 
-  // 手動開啟導覽的 state（茶客檔案按鈕觸發）
+  // 手動開啟導覽的 state（茶客檔案按鈕觸發，必須已登入才有入口）
   const [manualOnboarding, setManualOnboarding] = useState(false);
-
-  // 支援 ?preview=onboarding URL 參數（測試用）
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('preview') === 'onboarding') {
-      setShowWelcomeModal(true);
-    }
-  }, [setShowWelcomeModal]);
 
   // 監聽茶客檔案點「重新查看導覽」事件
   useEffect(() => {
-    const handleManualOpen = () => setManualOnboarding(true);
+    const handleManualOpen = () => {
+      // 額外保險：未登入絕對不顯示
+      if (!isAuthenticated) return;
+      setManualOnboarding(true);
+    };
     window.addEventListener('open-onboarding-tour', handleManualOpen);
     return () => window.removeEventListener('open-onboarding-tour', handleManualOpen);
-  }, []);
+  }, [isAuthenticated]);
 
   // 不再顯示首次進入遮罩，直接顯示內容
 
@@ -668,11 +664,11 @@ const App: React.FC = () => {
     // 先应用搜索
     let result = searchProfiles(source, searchQuery);
 
-    // 嚴選好茶页面只显示后台管理员上架的profiles（userId为空或null）
+    // 嚴選好茶只顯示 category = 'premium_tea'（或無分類）的 profiles
     if (currentView === 'HOME') {
       result = result.filter(p => {
-        const hasUserId = p.userId && p.userId !== '' && p.userId !== null && p.userId !== undefined;
-        return !hasUserId;
+        const cat = (p as any).category;
+        return !cat || cat === 'premium_tea';
       });
     }
     
@@ -904,15 +900,22 @@ const App: React.FC = () => {
               >
                 嚴選好茶
               </button>
-              <button 
-                onClick={() => handleNavigation('NEWS')} 
+              <button
+                onClick={() => handleNavigation('PROVIDER_LISTING')}
+                className={`text-xs font-black tracking-widest uppercase transition-all pb-1 border-b-2 elegant-hover ${currentView === 'PROVIDER_LISTING' ? 'text-brand-yellow border-brand-yellow' : 'text-gray-400 border-transparent hover:text-brand-black'}`}
+                style={currentView === 'PROVIDER_LISTING' ? { color: '#1a5f3f', borderColor: '#1a5f3f' } : {}}
+              >
+                特選魚市
+              </button>
+              <button
+                onClick={() => handleNavigation('NEWS')}
                 className={`text-xs font-black tracking-widest uppercase transition-all pb-1 border-b-2 elegant-hover ${currentView === 'NEWS' || currentView === 'ARTICLE_DETAIL' ? 'text-brand-yellow border-brand-yellow' : 'text-gray-400 border-transparent hover:text-brand-black'}`}
                 style={currentView === 'NEWS' || currentView === 'ARTICLE_DETAIL' ? { color: '#1a5f3f', borderColor: '#1a5f3f' } : {}}
               >
                 御前茶訊
               </button>
-              <button 
-                onClick={() => handleNavigation('ABOUT')} 
+              <button
+                onClick={() => handleNavigation('ABOUT')}
                 className={`text-xs font-black tracking-widest uppercase transition-all pb-1 border-b-2 elegant-hover ${currentView === 'ABOUT' ? 'text-brand-yellow border-brand-yellow' : 'text-gray-400 border-transparent hover:text-brand-black'}`}
                 style={currentView === 'ABOUT' ? { color: '#1a5f3f', borderColor: '#1a5f3f' } : {}}
               >
@@ -972,6 +975,13 @@ const App: React.FC = () => {
                 style={currentView === 'HOME' ? { color: '#1a5f3f' } : {}}
               >
                 嚴選好茶
+              </button>
+              <button
+                onClick={() => handleNavigation('PROVIDER_LISTING')}
+                className={`text-sm text-left py-2 elegant-hover ${currentView === 'PROVIDER_LISTING' ? 'font-black' : 'text-gray-700'}`}
+                style={currentView === 'PROVIDER_LISTING' ? { color: '#1a5f3f' } : {}}
+              >
+                特選魚市
               </button>
               <button
                 onClick={() => handleNavigation('NEWS')}
@@ -1506,6 +1516,12 @@ const App: React.FC = () => {
                 />
             )}
 
+            {currentView === 'PROVIDER_LISTING' && (
+                <ProviderListingPage
+                  onProfileClick={(p) => handleNavigation('PROFILE_DETAIL', p)}
+                />
+            )}
+
             {currentView === 'ARTICLE_DETAIL' && selectedArticle && (
                 <ArticleDetail
                   article={selectedArticle}
@@ -1583,8 +1599,8 @@ const App: React.FC = () => {
       {/* 底部狀態欄：顯示時間和在線人數 */}
       <Footer />
 
-      {/* 新會員導覽（自動/手動開啟） */}
-      {(showWelcomeModal || manualOnboarding) && (
+      {/* 新會員導覽（只在已登入時顯示） */}
+      {isAuthenticated && user && (showWelcomeModal || manualOnboarding) && (
         <WelcomeModal
           isOpen={showWelcomeModal || manualOnboarding}
           onClose={() => {
