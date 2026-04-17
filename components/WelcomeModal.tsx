@@ -104,11 +104,17 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({ isOpen, onClose, use
         {
           icon: (
             <div className="flex gap-3">
-              <div className="w-14 h-14 rounded-2xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #1a5f3f 0%, #15803d 100%)' }}>
-                <span className="text-2xl">👑</span>
+              {/* 嚴選好茶 - 皇冠 icon */}
+              <div className="w-14 h-14 rounded-2xl flex items-center justify-center shadow-md" style={{ background: 'linear-gradient(135deg, #1a5f3f 0%, #15803d 100%)' }}>
+                <svg className="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M5 16L3 6l5.5 4L12 4l3.5 6L21 6l-2 10H5zm0 2h14v2H5v-2z" />
+                </svg>
               </div>
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center">
-                <span className="text-2xl">🐟</span>
+              {/* 特選魚市 - 店鋪 icon */}
+              <div className="w-14 h-14 rounded-2xl flex items-center justify-center shadow-md" style={{ background: 'linear-gradient(135deg, #f59e0b 0%, #f97316 100%)' }}>
+                <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16l-1.5 4.5a3 3 0 01-5.7 0 3 3 0 01-5.6 0 3 3 0 01-5.7 0L4 6zm2 6.5V20h12v-7.5M10 20v-5h4v5" />
+                </svg>
               </div>
             </div>
           ),

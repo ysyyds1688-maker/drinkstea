@@ -111,6 +111,14 @@ const App: React.FC = () => {
   
   const { user, isAuthenticated, logout, showWelcomeModal, setShowWelcomeModal } = useAuth();
 
+  // 支援 ?preview=onboarding URL 參數（測試用，讓 QA 能預覽導覽）
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('preview') === 'onboarding') {
+      setShowWelcomeModal(true);
+    }
+  }, [setShowWelcomeModal]);
+
   // 不再顯示首次進入遮罩，直接顯示內容
 
   // 從後端 API 載入資料（優化：先顯示緩存，後台更新）
